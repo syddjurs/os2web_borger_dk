@@ -24,7 +24,7 @@ function os2web_borger_dk_node_info() {
       'base' => 'node_content',
       'description' => t('Handles articles from Borger.dk. Including integration with the Borger.dk-webservice'),
       'has_title' => '1',
-      'title_label' => t('Title'),
+      'title_label' => t('Titel'),
       'help' => '',
     ),
   );
