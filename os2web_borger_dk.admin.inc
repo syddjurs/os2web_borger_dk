@@ -305,7 +305,6 @@ function _os2web_borger_dk_articles_translate_soap_fault($borgerdk_id, $faultcod
       if (1 == preg_match($error_text, $faultstring, $matches)) {
         // We found a known error type
         $error['error_type'] = $error_type;
-
         // Now lets see if there are known matches / digits to return
         switch ($error_type) {
           case 'not_found' :
