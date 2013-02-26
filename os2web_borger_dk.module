@@ -1605,6 +1605,8 @@ function _os2web_borger_dk_GetArticleByUrl($borgerdk_url, $wsdl = 'https://www.b
  * Function _os2web_borger_dk_GetArticleByID().
  */
 function _os2web_borger_dk_GetArticleByID($borgerdk_id, $wsdl = 'https://www.borger.dk/_vti_bin/borger/ArticleExport.svc?wsdl') {
+  $admin_municipality = variable_get('os2web_borger_dk_municipality_active');
+  dsm(print_r($admin_municipality, TRUE));
   // This function uses the Borger.dk WebService
   // GetArticleByID in order to fetch a Borger.dk-article
   // by its article-ID.
@@ -1619,7 +1621,13 @@ function _os2web_borger_dk_GetArticleByID($borgerdk_id, $wsdl = 'https://www.bor
   // First we make sure to keep requests/minute within given limits.
   _os2web_borger_dk_check_webservice_constraints();
   // Then we execute our webservice-request.
-  $result_article = $client->GetArticleByID(array('articleID' => $borgerdk_id));
+
+  $array_get_article = array('articleID' => $borgerdk_id);
+
+  if ($admin_municipality != 0)  {
+      $array_get_article = array('articleID' => $borgerdk_id, 'municipalityCode' => $admin_municipality);
+  }
+  $result_article = $client->GetArticleByID($array_get_article);
   if (is_soap_fault($result_article)) {
     // An error was encountered and we examine it more closely.
     $error = _os2web_borger_dk_translate_soap_fault($borgerdk_id, $result_article->faultcode, $result_article->faultstring);

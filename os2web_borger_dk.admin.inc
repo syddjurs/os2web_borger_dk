@@ -188,5 +188,134 @@ function os2web_borger_dk_settings_form($form, $form_state) {
     '#default_value' => variable_get('os2web_borger_dk_microarticle_active', 0),
   );
 
+  $options = variable_get('os2web_borger_dk_municipality_list');
+  if (isset($options)) {
+    $muni_items= $options; 
+  }
+  else{
+    $muni_items= array();
+    $municipalities = _os2web_borger_dk_articles_GetMunicipalityList();
+    $muni_items[0] = t('--Not selected--');
+    foreach ($municipalities as $code => $item) {
+      $muni_items[$item['MunicipalityCode']] = $item['MunicipalityName'];
+    }
+    variable_set('os2web_borger_dk_municipality_list', $muni_items);
+  }
+
+  $admin_municipality = variable_get('os2web_borger_dk_municipality_active');
+  $form['os2web_borger_dk_settings_8'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Active Municipality import option'),
+    '#collapsible' => TRUE,
+    '#group' => 'vertical_settings_tab',
+  );
+  $form['os2web_borger_dk_settings_8']['os2web_borger_dk_municipality_active'] = array(
+    '#type' => 'select',
+    '#title' => t('Show and select Municipality'),
+
+    '#options' => $muni_items,
+    '#description' => t('Check to import specific articles according to Municipality from Borger.dk '),
+    '#default_value' => $admin_municipality,
+    );
   return system_settings_form($form);
+}
+
+/**
+ * Function _os2web_borger_dk_articles_GetAllSites
+ * This function uses the Borger.dk Webservice GetAllSites
+ * in order to fetch the menu-structure from Borger.dk
+ */
+function _os2web_borger_dk_articles_GetMunicipalityList($wsdl = 'https://www.borger.dk/_vti_bin/borger/ArticleExport.svc?wsdl') {
+  $errors = array();
+  $municipality_item = array();
+
+  // Then we can start using a new soap-client to find the article-ID from the Borger.dk-URL
+  $client = new SoapClient($wsdl, array('exceptions' => 0));
+  // First we make sure to keep requests/minute within given limits.
+  //_os2web_borger_dk_articles_check_webservice_constraints();
+  // Then we execute our webservice-request.
+  $result_list = $client->GetMunicipalityList();
+  if (is_soap_fault($result_list)) {
+    $errors = _os2web_borger_dk_articles_translate_soap_fault('GetMunicipalityList', $result_list->faultcode, $result_list->faultstring);
+    return $errors;
+  }
+
+  $municipality_item = array();
+  // Then we get the result-list from the specified webservice
+  $municipality_list = $result_list->GetMunicipalityListResult;
+  if (is_soap_fault($municipality_list)) {
+    $errors = _os2web_borger_dk_articles_translate_soap_fault('GetMunicipalityListResult', $municipality_list->faultcode, $municipality_list->faultstring);
+
+    return $errors;
+  }
+  else {
+    //print 'GetAllSites found these availlable menu-items at Borger.dk: '. print_r($municipality_list, TRUE) ."\n\n";
+    // Now we step through all the fetched menu-items and convert them to
+    // arrays of wanted field-sets.
+    if (is_array($municipality_list->Municipality)) {
+      foreach ($municipality_list->Municipality as $id => $menu_item) {
+        $new_item = _os2web_borger_dk_articles_parse_borgerdk_municipality_item($menu_item);
+        $municipality_item[] = $new_item;
+      }
+    }
+    else {
+      $new_item = _os2web_borger_dk_articles_parse_borgerdk_municipality_item($municipality_list->Municipality);
+      $municipality_item[] = $new_item;
+    }
+  }
+
+  return $municipality_item;
+}
+
+/**
+ * This function parses a Borger.dk-ArticleDescription and extracts all
+ * the field values we want for our list of titles (for autocompletion etc)
+ */
+function _os2web_borger_dk_articles_parse_borgerdk_municipality_item($menu_item) {
+  $borgerdk_menu = array(
+    'MunicipalityCode'    => $menu_item->MunicipalityCode,
+    'MunicipalityName' => $menu_item->MunicipalityName,
+  );
+
+  return $borgerdk_menu;
+}
+
+function _os2web_borger_dk_articles_translate_soap_fault($borgerdk_id, $faultcode, $faultstring) {
+  $error = array(
+      'error'        => 1,
+      //'MunicipalityCode'  => $borgerdk_id,
+      'error_code'   => $faultcode,
+      'error_string' => $faultstring,
+  );
+
+  // We set up an array of known SoapClient errors
+  //  array of: 'error_type' => '/regex-pattern to use/'
+  $known_errors = array(
+      'not_found' => '/^No articles found with ids \'(\d*)\'/',
+  );
+
+  // Now we examine the faultstring more closely
+  if ($faultcode == "s:Client") {
+    // Then we might know something about that error-type
+    foreach ($known_errors as $error_type => $error_text) {
+      $matches = array();
+      if (1 == preg_match($error_text, $faultstring, $matches)) {
+        // We found a known error type
+        $error['error_type'] = $error_type;
+
+        // Now lets see if there are known matches / digits to return
+        switch ($error_type) {
+          case 'not_found' :
+            $error['not_found_id'] = $matches[1];
+            break;
+          default : break;
+        }
+
+        // Finally we break out of the loop for finding this error
+        break;
+      }
+    }
+  }
+
+  return $error;
 }
