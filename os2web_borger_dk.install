@@ -44,7 +44,7 @@ function os2web_borger_dk_install() {
   // our new node-type.
   $data = field_info_instances('node', 'os2web_borger_dk_article');
   // Some of the fields are locked from from being changed.
-  $locked_os2web_types = array('field_os2web_borger_dk_borgerurl' => 1);
+  $locked_os2web_types = array('field_os2web_borger_dk_borgerurl' => 1, 'field_termref_kle' => 2);
   if (!empty($data)) {
     $edit_field_names = array('title' => 'title');
     $display_field_names = array('title' => 'title');
@@ -52,7 +52,10 @@ function os2web_borger_dk_install() {
       if (empty($locked_os2web_types[$type])) {
         $edit_field_names[$type] = $type;
       }
-      $display_field_names[$type] = $type;
+      if (empty($locked_os2web_types[$type]) || $locked_os2web_types[$type] == 1) {
+        // Only some locked types are visible. Others are taxonomies etc.
+        $display_field_names[$type] = $type;
+      }
     }
     variable_set('os2web_borger_dk_display', $display_field_names);
     variable_set('os2web_borger_dk_editable', $edit_field_names);

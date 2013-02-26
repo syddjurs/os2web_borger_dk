@@ -20,7 +20,7 @@ function os2web_borger_dk_settings_form($form, $form_state) {
     '#group' => 'vertical_settings_tab',
   );
   // Some of the fields are locked from from being changed.
-  $locked_os2web_types = array('field_os2web_borger_dk_borgerurl' => 1);
+  $locked_os2web_types = array('field_os2web_borger_dk_borgerurl' => 1, 'field_termref_kle' => 2);
 
   $data = field_info_instances('node', 'os2web_borger_dk_article');
   $newdata = array();
@@ -33,8 +33,11 @@ function os2web_borger_dk_settings_form($form, $form_state) {
     if (empty($locked_os2web_types[$type])) {
       $field_name[$type] = $type;
     }
-    $newdata[$type] = t($item['label']);
-    $init[$type] = $type;
+    if (empty($locked_os2web_types[$type]) || (!empty($locked_os2web_types[$type]) && $locked_os2web_types[$type] == 1)) {
+      // Only some of the locked types can be displayed.
+      $newdata[$type] = t($item['label']);
+      $init[$type] = $type;
+    }
   }
   $form_display = variable_get('os2web_borger_dk_display');
 

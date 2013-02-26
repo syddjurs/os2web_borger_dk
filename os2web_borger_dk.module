@@ -359,7 +359,7 @@ function os2web_borger_dk_after_build($form, &$form_state) {
   // Some of the fields are handled exclusively by OS2web.
   // These fields are required on node-add, and can NOT be
   // changed later on (ie. locked).
-  $locked_os2web_types = array('field_os2web_borger_dk_borgerurl' => 1);
+  $locked_os2web_types = array('field_os2web_borger_dk_borgerurl' => 1, 'field_termref_kle' => 2);
   $nid = $form_state['values']['nid'];
   $admin_display_fields = variable_get('os2web_borger_dk_display', array(NULL));
   $microarticle = variable_get('os2web_borger_dk_microarticle_active');
@@ -392,7 +392,8 @@ function os2web_borger_dk_after_build($form, &$form_state) {
 
     // Finally we lock the special types.
     foreach ($locked_os2web_types as $type => $locked) {
-      if (isset($form[$type])) {
+      // If locked = 1 then disable the field.
+      if (isset($form[$type]) && $locked == 1) {
         $form[$type]['#required'] = 0;
         $form[$type]['und']['#required'] = 0;
         $form[$type]['und'][0]['#required'] = 0;
@@ -403,10 +404,19 @@ function os2web_borger_dk_after_build($form, &$form_state) {
   }
   else {
     // This is a brand new node-add form, and we must hide every
-    // form-field except the locked types.
+    // form-field.
     $data = field_info_instances('node', 'os2web_borger_dk_article');
     foreach ($data as $type => $item) {
-      unset($form[$type]);
+      // Some fields must be checked before unsetting or php will
+      // die because a string for instance can not be unset.
+      if (!isset($locked_os2web_types[$type]) || $locked_os2web_types[$type] == 1) {
+        // These fields can safely be unset (so they are hidden).
+        unset($form[$type]);
+      }
+      if (isset($locked_os2web_types[$type]) && $locked_os2web_types[$type] == 2) {
+        // These fields must be hidden by unsetting the theme.
+        unset($form[$type]['und']['#theme']);
+      }
     }
     unset($form['title']);
 
@@ -421,17 +431,13 @@ function os2web_borger_dk_after_build($form, &$form_state) {
   return $form;
 }
 
-
 /**
  * Function os2web_borger_dk_process_checkboxes_os2web_borger_dk_article().
  */
 function os2web_borger_dk_process_checkboxes_os2web_borger_dk_article(&$element) {
 
   $admin_display_fields = variable_get('os2web_borger_dk_display', array(NULL));
-  if (empty($element)) {
-
-  }
-  else {
+  if (!empty($element)) {
     foreach (element_children($element) as $key) {
       if (!$admin_display_fields[$key]) {
         $element[$key]['#attributes'] = array('disabled' => 'disabled');
