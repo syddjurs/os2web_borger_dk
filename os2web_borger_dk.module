@@ -1630,7 +1630,7 @@ function _os2web_borger_dk_GetArticleByID($borgerdk_id, $wsdl = 'https://www.bor
   $array_get_article = array('articleID' => $borgerdk_id);
   // If municipality is set, then get article by id and municipality code.
   if ($admin_municipality != 0)  {
-    $array_get_article = array('articleID' => $borgerdk_id, 'municipalityCode' => $admin_municipality);
+    $array_get_article['municipalityCode'] = $admin_municipality;
   }
   $result_article = $client->GetArticleByID($array_get_article);
   if (is_soap_fault($result_article)) {
