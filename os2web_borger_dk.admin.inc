@@ -168,6 +168,12 @@ function os2web_borger_dk_settings_form($form, $form_state) {
     '#description' => t('Check to enable the menu-import from Borger.dk'),
     '#default_value' => variable_get('os2web_borger_dk_menus_import', 0),
   );
+  $form['os2web_borger_dk_articles_settings_6']['os2web_borger_dk_borger_dk_menu_name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Menu name for imported Borger.dk-menu'),
+    '#description' => t("The imported menu will be put into a local menu by the name given here."),
+    '#default_value' => variable_get('os2web_borger_dk_borger_dk_menu_name', 'Borger.dk menu'),
+  );
   $sync_options = drupal_map_assoc(range(1, 24));
   $sync_options[0] = t('Disabled (No menu syncronization)');
   $form['os2web_borger_dk_settings_6']['os2web_borger_dk_nightly_menu_sync'] = array(
@@ -176,6 +182,12 @@ function os2web_borger_dk_settings_form($form, $form_state) {
     '#options' => $sync_options,
     '#description' => t('At what time of day should menus be syncronized with the Borger.dk-Webservice.'),
     '#default_value' => variable_get('os2web_borger_dk_nightly_menu_sync'),
+  );
+  $form['os2web_borger_dk_articles_settings_6']['os2web_borger_dk_weekly_borger_dk_menus_import'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Should Borger.dk-menus be updated weekly'),
+    '#description' => t('Check to enable weekly menu-import from Borger.dk (otherwise menus are imported daily)'),
+    '#default_value' => variable_get('os2web_borger_dk_weekly_borger_dk_menus_import', 0),
   );
 
   $form['os2web_borger_dk_settings_7'] = array(
@@ -197,7 +209,7 @@ function os2web_borger_dk_settings_form($form, $form_state) {
   }
   else{
     $muni_items= array();
-    $municipalities = _os2web_borger_dk_articles_GetMunicipalityList();
+    $municipalities = _os2web_borger_dk_GetMunicipalityList();
     $muni_items[0] = t('--Not selected--');
     foreach ($municipalities as $code => $item) {
       $muni_items[$item['MunicipalityCode']] = $item['MunicipalityName'];
@@ -224,11 +236,11 @@ function os2web_borger_dk_settings_form($form, $form_state) {
 }
 
 /**
- * Function _os2web_borger_dk_articles_GetAllSites
- * This function uses the Borger.dk Webservice GetAllSites
- * in order to fetch the menu-structure from Borger.dk
+ * Function _os2web_borger_dk_GetMunicipalityList()
+ * This function uses the Borger.dk Webservice GetMunicipalityList
+ * in order to fetch a list of Municipality-codes from Borger.dk
  */
-function _os2web_borger_dk_articles_GetMunicipalityList($wsdl = 'https://www.borger.dk/_vti_bin/borger/ArticleExport.svc?wsdl') {
+function _os2web_borger_dk_GetMunicipalityList($wsdl = 'https://www.borger.dk/_vti_bin/borger/ArticleExport.svc?wsdl') {
   $errors = array();
   $municipality_item = array();
 
