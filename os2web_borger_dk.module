@@ -83,7 +83,7 @@ function os2web_borger_dk_form_alter(&$form, &$form_state, $form_id) {
           os2web_borger_dk_autocomplete_form($form, $form_state);
         }
 
-        $locked_os2web_types = array('field_os2web_borger_dk_borgerurl' => 1);
+        $locked_os2web_types = array('field_os2web_borger_dk_borgerurl' => 1, 'field_termref_kle' => 2);
         $admin_display_fields = variable_get('os2web_borger_dk_display');
 
         $data = field_info_instances('node', 'os2web_borger_dk_article');
@@ -96,6 +96,8 @@ function os2web_borger_dk_form_alter(&$form, &$form_state, $form_id) {
         $admin_last_settings = variable_get('os2web_borger_dk_admin_last_settings');
 
         foreach ($data as $type => $item) {
+          // if ((isset($locked_os2web_types[$type]) && $locked_os2web_types[$type] != 2)
+          // ||!isset($locked_os2web_types[$type])) {
           if ($type != 'field_termref_kle') {
             // Then we insert field label to our checkboxes options.
             $checkbox_opts[$type] = t($item['label']);
@@ -417,9 +419,9 @@ function os2web_borger_dk_after_build($form, &$form_state) {
       }
       if (isset($locked_os2web_types[$type]) && $locked_os2web_types[$type] == 2) {
         // These fields must be hidden by unsetting the theme.
-        //unset($form[$type]['und']['#theme']);
+        // unset($form[$type]['und']['#theme']);
         hide($form[$type]['und']);
-     }
+      }
     }
     unset($form['title']);
 
@@ -1614,6 +1616,8 @@ function _os2web_borger_dk_GetArticleByUrl($borgerdk_url, $wsdl = 'https://www.b
  * Function _os2web_borger_dk_GetArticleByID().
  */
 function _os2web_borger_dk_GetArticleByID($borgerdk_id, $wsdl = 'https://www.borger.dk/_vti_bin/borger/ArticleExport.svc?wsdl') {
+  // Check the admin setting.
+  $admin_municipality = variable_get('os2web_borger_dk_municipality_active');
   // This function uses the Borger.dk WebService
   // GetArticleByID in order to fetch a Borger.dk-article
   // by its article-ID.
@@ -1628,7 +1632,12 @@ function _os2web_borger_dk_GetArticleByID($borgerdk_id, $wsdl = 'https://www.bor
   // First we make sure to keep requests/minute within given limits.
   _os2web_borger_dk_check_webservice_constraints();
   // Then we execute our webservice-request.
-  $result_article = $client->GetArticleByID(array('articleID' => $borgerdk_id));
+  $array_get_article = array('articleID' => $borgerdk_id);
+  // If municipality is set, then get article by id and municipality code.
+  if ($admin_municipality != 0)  {
+    $array_get_article['municipalityCode'] = $admin_municipality;
+  }
+  $result_article = $client->GetArticleByID($array_get_article);
   if (is_soap_fault($result_article)) {
     // An error was encountered and we examine it more closely.
     $error = _os2web_borger_dk_translate_soap_fault($borgerdk_id, $result_article->faultcode, $result_article->faultstring);
@@ -1640,7 +1649,6 @@ function _os2web_borger_dk_GetArticleByID($borgerdk_id, $wsdl = 'https://www.bor
     if (is_soap_fault($article)) {
       // An error was encountered and we examine it more closely.
       $error = _os2web_borger_dk_translate_soap_fault($borgerdk_id, $article->faultcode, $article->faultstring);
-
       return $error;
     }
   }

@@ -43,6 +43,13 @@ div.field.field-name-field-os2web-borger-dk-selfservi.field-type-text-long.field
   -moz-border-radius: 2px;
 }
 
+div.field-items div.field-item.even img {
+  height: 200px;
+  left: 455px;
+  position: absolute;
+  top: 130px;
+  width: 250px;
+}
 div.field.field-name-field-os2web-borger-dk-recommend.field-type-text-long.field-label-hidden {
   background-color: #f5f5f5;
   border-radius: 10px;
@@ -59,9 +66,11 @@ div.field.field-name-field-os2web-borger-dk-legislati.field-type-text-long.field
 div.field.field-name-field-os2web-borger-dk-header.field-type-text-long.field-label-hidden div div p {
   border-bottom: 4px solid #97b065;
   font-size: 18px;
+  height: 200px;
   margin-bottom: 30px;
   margin-right: 30px;
   margin-top: 30px;
+  width: 60%;
 }
 
 div.field.field-name-field-os2web-borger-dk-selfservi.field-type-text-long.field-label-hidden {
