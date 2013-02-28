@@ -96,20 +96,22 @@ function os2web_borger_dk_form_alter(&$form, &$form_state, $form_id) {
         $admin_last_settings = variable_get('os2web_borger_dk_admin_last_settings');
 
         foreach ($data as $type => $item) {
-          // Then we insert field label to our checkboxes options.
-          $checkbox_opts[$type] = t($item['label']);
+          if ($type != 'field_termref_kle') {
+            // Then we insert field label to our checkboxes options.
+            $checkbox_opts[$type] = t($item['label']);
 
-          // admin-config says we should show this item as an option.
-          if ($admin_display_fields[$type]) {
-            if (empty($visible_items) || (!empty($visible_items) && !empty($visible_items[$type]))) {
-              // If visible_items is empty that means we should use admin-config
-              // or if the type of visible_items is set, and set to be displayed
-              // then we add this type to the default_values.
-              $initial_values[] = $type;
-            }
-            else {
-              if ($admin_last_settings[$type] != $admin_display_fields[$type] && $visible_items[$type] == $admin_last_settings[$type]) {
+            // admin-config says we should show this item as an option.
+            if ($admin_display_fields[$type]) {
+              if (empty($visible_items) || (!empty($visible_items) && !empty($visible_items[$type]))) {
+                // If visible_items is empty that means we should use admin-config
+                // or if the type of visible_items is set, and set to be displayed
+                // then we add this type to the default_values.
                 $initial_values[] = $type;
+              }
+              else {
+                if ($admin_last_settings[$type] != $admin_display_fields[$type] && $visible_items[$type] == $admin_last_settings[$type]) {
+                  $initial_values[] = $type;
+                }
               }
             }
           }
@@ -415,8 +417,9 @@ function os2web_borger_dk_after_build($form, &$form_state) {
       }
       if (isset($locked_os2web_types[$type]) && $locked_os2web_types[$type] == 2) {
         // These fields must be hidden by unsetting the theme.
-        unset($form[$type]['und']['#theme']);
-      }
+        //unset($form[$type]['und']['#theme']);
+        hide($form[$type]['und']);
+     }
     }
     unset($form['title']);
 
