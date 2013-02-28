@@ -20,7 +20,7 @@ function os2web_borger_dk_settings_form($form, $form_state) {
     '#group' => 'vertical_settings_tab',
   );
   // Some of the fields are locked from from being changed.
-  $locked_os2web_types = array('field_os2web_borger_dk_borgerurl' => 1, 'field_termref_kle' => 2);
+  $locked_os2web_types = array('field_os2web_borger_dk_borgerurl' => 1, 'field_termref_kle' => 2, 'field_os2web_borger_dk_formterm' => 2);
 
   $data = field_info_instances('node', 'os2web_borger_dk_article');
   $newdata = array();

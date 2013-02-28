@@ -51,7 +51,12 @@ function os2web_borger_dk_menu() {
 function os2web_borger_dk_articles_debug_form($form, $form_state) {
   $form['delete_menu'] = array(
     '#type'   => 'submit',
-    '#value'  => t('Debug now'),
+    '#value'  => 'Debug Cron Borger.dk-Menu now',
+    '#submit' => array('os2web_borger_dk_debug_form_submit')
+  );
+  $form['delete_form'] = array(
+    '#type'   => 'submit',
+    '#value'  => 'Debug Cron FORM-taxonomies now',
     '#submit' => array('os2web_borger_dk_debug_form_submit')
   );
 
@@ -101,6 +106,7 @@ function os2web_borger_dk_form_alter(&$form, &$form_state, $form_id) {
           os2web_borger_dk_autocomplete_form($form, $form_state);
         }
 
+        //$locked_os2web_types = array('field_os2web_borger_dk_borgerurl' => 1, 'field_os2web_borger_dk_formterm' => 2, 'field_termref_kle' => 2);
         $locked_os2web_types = array('field_os2web_borger_dk_borgerurl' => 1);
         $admin_display_fields = variable_get('os2web_borger_dk_display');
 
@@ -377,7 +383,7 @@ function os2web_borger_dk_after_build($form, &$form_state) {
   // Some of the fields are handled exclusively by OS2web.
   // These fields are required on node-add, and can NOT be
   // changed later on (ie. locked).
-  $locked_os2web_types = array('field_os2web_borger_dk_borgerurl' => 1, 'field_termref_kle' => 2);
+  $locked_os2web_types = array('field_os2web_borger_dk_borgerurl' => 1, 'field_termref_kle' => 2, 'field_os2web_borger_dk_formterm' => 2);
   $nid = $form_state['values']['nid'];
   $admin_display_fields = variable_get('os2web_borger_dk_display', array(NULL));
   $microarticle = variable_get('os2web_borger_dk_microarticle_active');
@@ -438,7 +444,6 @@ function os2web_borger_dk_after_build($form, &$form_state) {
     }
     unset($form['title']);
 
-    // TODO: Move this to the module-feature, and delete from this location.
     if (isset($form['path']['pathauto']['#default_value'])) {
       $form['path']['pathauto']['#checked'] = 0;
     }
@@ -481,7 +486,6 @@ function os2web_borger_dk_fix_disabled(&$elements) {
   }
   $elements['#attributes']['disabled'] = 'disabled';
 }
-
 
 /**
  * Implements hook_node_load().
@@ -735,6 +739,7 @@ function os2web_borger_dk_sync_submit($form, &$form_state) {
 
   drupal_goto('node/' . $nid . '/edit');
 }
+
 /**
  * Function os2web_borger_dk_microarticles_update_submit().
  */
@@ -1074,7 +1079,7 @@ function os2web_borger_dk_cron() {
 /**
  * Function _os2web_borger_dk_menus_cronbatch()
  */
-function _os2web_borger_dk_menus_cronbatch() {
+function _os2web_borger_dk_menus_cronbatch($force_update = FALSE) {
   $this_run = time();
   $last_run = variable_get('os2web_borger_dk_menus_last_update', $this_run);
 
@@ -1106,14 +1111,13 @@ function _os2web_borger_dk_menus_cronbatch() {
     // Before we update the Borger.dk-menu we must check if it has changed
     // from last time we updated it.
 
-    /* DEBUG: Use the variable_get-value for LIVE/REAL-site:
-    //$old_value = variable_get('os2web_borger_dk_old_menu_structure');
-    */
-    $old_value = '';
+    $old_value = variable_get('os2web_borger_dk_old_menu_structure');
+    if ($force_update) {
+      $old_value = '';
+    }
 
     $new_value = serialize($my_menu);
     if ($old_value != $new_value) {
-
       variable_set('os2web_borger_dk_old_menu_structure', $new_value);
 
       _os2web_borger_dk_menus_create_items($my_menu);
@@ -1139,10 +1143,187 @@ function _os2web_borger_dk_menus_cronbatch() {
   }
 }
 
+/**
+ * Function _os2web_borger_dk_forms_cronbatch()
+ */
+function _os2web_borger_dk_forms_cronbatch($force_update = FALSE) {
+  $this_run = time();
+  $last_run = variable_get('os2web_borger_dk_form_last_update', $this_run);
+  $form_menu_vid = variable_get('os2web_borger_dk_form_menu_vid', FALSE);
+  $errors = array();
+
+  if (FALSE === $form_menu_vid) {
+    $form_menu_vid = db_query("SELECT vid FROM {taxonomy_vocabulary} WHERE machine_name LIKE :menu_name", array(':menu_name' => 'os2web_borger_dk_form_menu'))->fetchField();
+    variable_set('os2web_borger_dk_form_menu_vid', $form_menu_vid);
+  }
+
+  $old_form_serialized = variable_get('os2web_borger_dk_old_form_structure', FALSE);
+  if ($force_update || (FALSE === $old_form_serialized)) {
+    $old_form_serialized = '';
+    // First we fetch the top level form-elements.
+    $service_areas_list_xml = file_get_contents('http://www.form-online.dk:8080/FORM-REST/resources/?dybde=0');
+    // Before we go any further we check if we got an error or not.
+    if ($service_areas_list_xml === FALSE) {
+      // TODO: Set a watchdog message saying the form-online.dk-service failed.
+      $errors[] = array(
+        'error' => 'Could not get the top-level FORM menu from: http://www.form-online.dk:8080/FORM-REST/resources/?dybde=0',
+      );
+    }
+    else {
+      // Then we can convert the fetched list into an XML document.
+      $service_areas_doc = new DOMDocument('1.0', 'UTF-8');
+      $service_areas_doc->strictErrorChecking = FALSE;
+      $service_areas_doc->loadXML($service_areas_list_xml);
+      $service_areas_xml = simplexml_import_dom($service_areas_doc);
+
+      // Now we must convert the service_areas_xml to a nicely formatted array.
+      $service_areas_array = _os2web_borger_dk_build_service_areas($service_areas_xml);
+
+      // Then we can fetch the sub-level form-elements.
+      $form_task_list_xml = file_get_contents('http://www.form-online.dk:8080/FORM-REST/resources/?dybde=4');
+      // Before we go any further we check if we got an error or not.
+      if ($form_task_list_xml === FALSE) {
+        // TODO: Set a watchdog message saying the form-online.dk-service failed.
+        $errors[] = array(
+          'error' => 'Could not get the top-level FORM menu from: http://www.form-online.dk:8080/FORM-REST/resources/?dybde=0',
+        );
+      }
+      else {
+        // Next we convert the form_task_list_xml to a nicely formatted array.
+        $services_doc = new DOMDocument('1.0', 'UTF-8');
+        $services_doc->strictErrorChecking = FALSE;
+        $services_doc->loadXML($form_task_list_xml);
+        $services_xml = simplexml_import_dom($services_doc);
+
+        // Then we merge the two arrays to create the total FORM-menu structure.
+        _os2web_borger_dk_build_services_list($service_areas_array, $services_xml);
+        $new_value = serialize($service_areas_array);
+        if ($force_update || ($old_form_serialized != $new_value)) {
+          variable_set('os2web_borger_dk_old_form_structure', $new_value);
+
+          // Now we can check/create the taxonomies found in the FORM-Services.
+          _os2web_borger_dk_check_form_service_taxonomies($service_areas_array, $form_menu_vid);
+        }
+      }
+    }
+  }
+
+  if (!empty($errors)) {
+    $updated_at = date('Y-m-d\TH\:i\:s', $last_run);
+    $msg = 'One or more errors occured while building the new Borger.dk FORM taxonomies locally. Last succesful update was at: %success. Listing errors in watchdog.';
+    watchdog('Borger.dk-articles', $msg, $variables = array('%success' => $updated_at));
+    foreach ($errors as $error) {
+      watchdog('Borger.dk-articles', $error['error'] ."\n");
+    }
+  }
+  else {
+    // Finally we update the timestamp for when our last succesfull menu-
+    // update took place (that would be now).
+    variable_set('os2web_borger_dk_form_last_update', $this_run);
+    $updated_at = date('Y-m-d\TH\:i\:s', $this_run);
+    $msg = 'Succesfully updated/created the Borger.dk FORM taxonomies locally. Update occured at: %success';
+    watchdog('Borger.dk-articles', $msg, $variables = array('%success' => $updated_at));
+  }
+}
+
+function _os2web_borger_dk_check_form_service_taxonomies($form_service_list, $vid, $ptid = NULL, $level = 0) {
+  //$log = '_os2web_borger_dk_check_form_service_taxonomies(service_list, vid, ptid, level)::[array(), '. $vid .', '. $ptid .', '. $level .'] started.'."\n";
+  $levels = array(
+    0 => 'ServiceOmraade',
+    1 => 'HovedOmraade',
+    2 => 'OpgaveOmraade',
+    3 => 'Opgave',
+  );
+  $nlname = ($level < 3) ? ($levels[$level + 1]) : FALSE;
+  foreach ($form_service_list as $form_uuid => $form_item) {
+    $item_name = $form_item['NavnTekst'];
+    //$log .= '-> Checking item (Uuid, NavnTekst): ('. $form_uuid .', '. $item_name .")\n";
+    $item_check = _os2web_borger_dk_check_form_taxonomy_item($form_uuid, $item_name, $vid, $ptid);
+    if ($item_check === FALSE) {
+      // The taxonomy-term does not exist and we create it.
+      //$log .= '=> (Check-result === FALSE)'."\n".'-> Calling : _os2web_borger_dk_insert_form_taxonomy_item() for uuid: '. $form_uuid ."\n";
+      $term_tid = _os2web_borger_dk_insert_form_taxonomy_item($form_uuid, $item_name, $vid, $ptid);
+      //$log .= '=> Got new term-tid: '. $term_tid ."\n";
+    }
+    // If this item has children those must be checked as well.
+    if (($level < 3) && (isset($form_item[$nlname]) && is_array($form_item[$nlname]))) {
+      //$log .= '-> Going recursive on level : '. $nlname ."\n===================\n";
+      //error_log($log ."\n\n", 3, '/home/peter/bellcom/log/debug_form_kle.log');
+      //$log = '';
+      _os2web_borger_dk_check_form_service_taxonomies($form_item[$nlname], $vid, $term_tid, 1 + $level);
+    }
+    else {
+      //$log .= '-> No children on this level: ==> form_item: '. print_r($form_item, TRUE) ."\n===================\n";
+      //error_log($log ."\n\n", 3, '/home/peter/bellcom/log/debug_form_kle.log');
+      //$log = '';
+    }
+  }
+}
+
+function _os2web_borger_dk_check_form_taxonomy_item($uuid, $name, $vid, $ptid = NULL) {
+  $check = FALSE;
+  //$log = '_os2web_borger_dk_check_form_taxonomy_item. For uuid,vid,name: '. $uuid .', '. $vid .', '. $name ."\n";
+  $term_result = taxonomy_get_term_by_name($name, 'os2web_borger_dk_form_menu');
+  if (!empty($term_result)) {
+    foreach($term_result as $tid => $term) {
+      if (($vid == $term->vid) && ($uuid == $term->description)) {
+        $check = $term;
+        //$log .= '==> FOUND term: '. print_r($term, TRUE) ."\n\n";
+        break;
+      }
+    }
+  }
+  //error_log($log, 3, '/home/peter/bellcom/log/debug_form_kle.log');
+
+  return $check;
+}
+
+function _os2web_borger_dk_insert_form_taxonomy_item($uuid, $name, $vid, $ptid = NULL) {
+  $term = new stdClass();
+  $term->vid = $vid;
+  $term->name = trim($name);
+  $term->description = $uuid;
+
+  // If a parent tid is given we must set that too.
+  if (isset($ptid)) {
+    $term->parent = $ptid;
+  }
+
+  // Then we can insert the new taxonomy term.
+  taxonomy_term_save($term);
+  //error_log('_os2web_borger_dk_insert_form_taxonomy_item(). saved this term: '. print_r($term, TRUE) ."\n\n", 3, '/home/peter/bellcom/log/debug_form_kle.log');
+
+  // We return the tid of the newly created term.
+  return $term->tid;
+}
+
+/* taxonomy_term_save($term) 
+ $term: The taxonomy term object with the following properties:
+
+    vid: The ID of the vocabulary the term is assigned to.
+    name: The name of the term.
+    tid: (optional) The unique ID for the term being saved. If $term->tid is empty or omitted, a new term will be inserted.
+    description: (optional) The term's description.
+    format: (optional) The text format for the term's description.
+    weight: (optional) The weight of this term in relation to other terms within the same vocabulary.
+    parent: (optional) The parent term(s) for this term. This can be a single term ID or an array of term IDs. A value of 0 means this term does not have any parents. When omitting this variable during an update, the existing hierarchy for the term remains unchanged.
+    vocabulary_machine_name: (optional) The machine name of the vocabulary the term is assigned to. If not given, this value will be set automatically by loading the vocabulary based on $term->vid.
+    original: (optional) The original taxonomy term object before any changes were applied. When omitted, the unchanged taxonomy term object is loaded from the database and stored in this property.
+*/
+
 
 function os2web_borger_dk_debug_form_submit($form, &$form_state) {
+  // 1) Use this function to delete the Borger.dk-menu:
   //_debug_remove_add_menu();
-  _os2web_borger_dk_menus_cronbatch();
+
+  // 2) Use these functions to test the cronjobs:
+  if (($form_state['submitted'] == 1) && ($form_state['input']['op'] == 'Debug Cron Borger.dk-Menu now')) {
+    _os2web_borger_dk_menus_cronbatch(TRUE);
+  }
+  if (($form_state['submitted'] == 1) && ($form_state['input']['op'] == 'Debug Cron FORM-taxonomies now')) {
+    _os2web_borger_dk_forms_cronbatch(TRUE);
+  }
+
   drupal_goto('admin/borgerdk/debug');
 }
 
@@ -1159,6 +1340,65 @@ function _debug_remove_add_menu() {
     'description' => 'The full menu from Borger.dk',
   );
   menu_save($new_menu);
+}
+
+/**
+ * Function _os2web_borger_dk_build_service_areas()
+ */
+function _os2web_borger_dk_build_service_areas($areas_xml) {
+  $areas = array();
+  foreach ($areas_xml->ServiceOmraade as $obj) {
+    $name = $obj->NavnTekst;
+    $id = $obj->UuidIdentifikator;
+    $areas["$id"] = array();
+    $areas["$id"]['NavnTekst'] = (string) $name;
+  }
+
+  return $areas;
+}
+
+/**
+ * Function _os2web_borger_dk_build_services_list()
+ */
+function _os2web_borger_dk_build_services_list(&$service_areas, $services) {
+  foreach ($services->ServiceOmraade as $obj) {
+    $name = (string) $obj->NavnTekst;
+    $id = (string) $obj->UuidIdentifikator;
+    if (!empty($service_areas["$id"])) {
+      $service_areas["$id"]['HovedOmraade'] = array();
+      $my_services_list = _os2web_borger_dk_build_services_sub_list($obj, 1);
+      $service_areas["$id"]['HovedOmraade'] = $my_services_list;
+    }
+  }
+}
+
+/**
+ * Function _os2web_borger_dk_build_services_sub_list()
+ */
+function _os2web_borger_dk_build_services_sub_list($obj, $level = 0) {
+  $levels = array(
+    0 => 'ServiceOmraade',
+    1 => 'HovedOmraade',
+    2 => 'OpgaveOmraade',
+    3 => 'Opgave',
+  );
+
+  $sub_list = array();
+  $lname = $levels[$level];
+  if (isset($obj->{"$lname"})) {
+    foreach ($obj->{"$lname"} as $sub_obj) {
+      $name = (string) $sub_obj->NavnTekst;
+      $id = (string) $sub_obj->UuidIdentifikator;
+      $sub_list["$id"] = array();
+      $sub_list["$id"]['NavnTekst'] = $name;
+      if ($level < 3) {
+        $sub_level = $levels[$level + 1];
+        $sub_list["$id"][$sub_level] = _os2web_borger_dk_build_services_sub_list($sub_obj, $level + 1);
+      }
+    }
+  }
+
+  return $sub_list;
 }
 
 /**
