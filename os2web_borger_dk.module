@@ -776,7 +776,7 @@ function os2web_borger_dk_node_submit(&$node, $form, &$form_state) {
       }
 
       $serialized_data = serialize($field_settings);
-      db_update('os2web_borger_dk_article')
+      db_merge('os2web_borger_dk_article')
         ->fields(array('field_settings' => $serialized_data))
         ->condition('nid', $nid, '=')
         ->execute();
