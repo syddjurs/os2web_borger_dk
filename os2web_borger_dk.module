@@ -187,6 +187,7 @@ function os2web_borger_dk_form_alter(&$form, &$form_state, $form_id) {
                 // visibility option.
                 $form['os2web_borger_dk_micro_settings_' . $microno] = array(
                   '#type' => 'fieldset',
+                  '#weight' => '6.'.$microno,
                 );
 
                 $form['os2web_borger_dk_micro_settings_' . $microno][$h2_text_field] = array(
