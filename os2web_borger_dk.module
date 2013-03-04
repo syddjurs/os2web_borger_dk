@@ -438,8 +438,8 @@ function os2web_borger_dk_after_build($form, &$form_state) {
         unset($form[$type]);
       }
       if (isset($locked_os2web_types[$type]) && $locked_os2web_types[$type] == 2) {
-        // These fields must be hidden by unsetting the theme.
-        unset($form[$type]['und']['#theme']);
+        // These fields must be hidden by using the hide() function.
+        hide($form[$type]);
       }
     }
     unset($form['title']);
@@ -1175,8 +1175,6 @@ function _os2web_borger_dk_forms_cronbatch($force_update = FALSE) {
       drupal_set_message('Got existing "Other" term-tid: '. $other_term_tid .', for term-title: '. $title .', term: <pre>'. print_r($item_check, TRUE) .'</pre>');
     }
   }
-
-  return;
 
   $old_form_serialized = variable_get('os2web_borger_dk_old_form_structure', FALSE);
   if ($force_update || (FALSE === $old_form_serialized)) {

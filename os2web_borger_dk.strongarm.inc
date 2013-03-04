@@ -70,7 +70,7 @@ function os2web_borger_dk_strongarm() {
   $strongarm->api_version = 1;
   $strongarm->name = 'menu_options_os2web_borger_dk_article';
   $strongarm->value = array(
-    0 => 'main-menu',
+    0 => 'menu-indholdsmenu',
   );
   $export['menu_options_os2web_borger_dk_article'] = $strongarm;
 
@@ -78,7 +78,7 @@ function os2web_borger_dk_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'menu_parent_os2web_borger_dk_article';
-  $strongarm->value = 'main-menu:0';
+  $strongarm->value = 'menu-indholdsmenu:0';
   $export['menu_parent_os2web_borger_dk_article'] = $strongarm;
 
   $strongarm = new stdClass();
