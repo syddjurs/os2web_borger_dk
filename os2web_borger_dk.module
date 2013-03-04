@@ -1245,6 +1245,11 @@ function _os2web_borger_dk_check_form_service_taxonomies($form_service_list, $vi
       $term_tid = _os2web_borger_dk_insert_form_taxonomy_item($form_uuid, $item_name, $vid, $ptid);
       //$log .= '=> Got new term-tid: '. $term_tid ."\n";
     }
+    else {
+      // The taxonomy-term does exist and we use the tid as parent tid for
+      // any and all children.
+      $term_tid = $item_check->tid;
+    }
     // If this item has children those must be checked as well.
     if (($level < 3) && (isset($form_item[$nlname]) && is_array($form_item[$nlname]))) {
       //$log .= '-> Going recursive on level : '. $nlname ."\n===================\n";
