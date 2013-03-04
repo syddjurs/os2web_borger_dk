@@ -270,7 +270,7 @@ function os2web_borger_dk_field_default_fields() {
           'label' => 'hidden',
           'settings' => array(),
           'type' => 'hidden',
-          'weight' => '13',
+          'weight' => '11',
         ),
         'related_block' => array(
           'label' => 'above',
@@ -498,11 +498,10 @@ function os2web_borger_dk_field_default_fields() {
       'description' => '',
       'display' => array(
         'default' => array(
-          'label' => 'above',
-          'module' => 'taxonomy',
+          'label' => 'hidden',
           'settings' => array(),
-          'type' => 'taxonomy_term_reference_link',
-          'weight' => 14,
+          'type' => 'hidden',
+          'weight' => '13',
         ),
         'related_block' => array(
           'label' => 'above',
@@ -1504,10 +1503,9 @@ function os2web_borger_dk_field_default_fields() {
       'description' => '',
       'display' => array(
         'default' => array(
-          'label' => 'above',
-          'module' => 'taxonomy',
+          'label' => 'hidden',
           'settings' => array(),
-          'type' => 'taxonomy_term_reference_link',
+          'type' => 'hidden',
           'weight' => '12',
         ),
         'related_block' => array(
