@@ -502,7 +502,7 @@ function os2web_borger_dk_field_default_fields() {
           'module' => 'taxonomy',
           'settings' => array(),
           'type' => 'taxonomy_term_reference_link',
-          'weight' => '11',
+          'weight' => 14,
         ),
         'related_block' => array(
           'label' => 'above',

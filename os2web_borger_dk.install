@@ -33,6 +33,7 @@ function os2web_borger_dk_uninstall() {
   variable_del('os2web_borger_dk_not_found_menu_mlid');
   variable_del('os2web_borger_dk_form_last_update');
   variable_del('os2web_borger_dk_form_menu_vid');
+  variable_del('os2web_borger_dk_form_menu_tid_other');
   variable_del('os2web_borger_dk_old_form_structure');
 
   if (db_table_exists('os2web_borger_dk_article')) {
@@ -95,6 +96,7 @@ function os2web_borger_dk_install() {
   variable_set('os2web_borger_dk_borger_dk_menu_name', 'Borger.dk menu');
   variable_set('os2web_borger_dk_not_found_menu_mlid', 0);
   variable_set('os2web_borger_dk_form_menu_vid', FALSE);
+  variable_set('os2web_borger_dk_form_menu_tid_other', FALSE);
   variable_set('os2web_borger_dk_old_form_structure', FALSE);
   // Next we populate the titles-table for title-autocomplete
   _os2web_borger_dk_titles_cronbatch(TRUE);

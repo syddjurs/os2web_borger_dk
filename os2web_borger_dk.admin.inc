@@ -168,7 +168,7 @@ function os2web_borger_dk_settings_form($form, $form_state) {
     '#description' => t('Check to enable the menu-import from Borger.dk'),
     '#default_value' => variable_get('os2web_borger_dk_menus_import', 0),
   );
-  $form['os2web_borger_dk_articles_settings_6']['os2web_borger_dk_borger_dk_menu_name'] = array(
+  $form['os2web_borger_dk_settings_6']['os2web_borger_dk_borger_dk_menu_name'] = array(
     '#type' => 'textfield',
     '#title' => t('Menu name for imported Borger.dk-menu'),
     '#description' => t("The imported menu will be put into a local menu by the name given here."),
@@ -183,7 +183,7 @@ function os2web_borger_dk_settings_form($form, $form_state) {
     '#description' => t('At what time of day should menus be syncronized with the Borger.dk-Webservice.'),
     '#default_value' => variable_get('os2web_borger_dk_nightly_menu_sync'),
   );
-  $form['os2web_borger_dk_articles_settings_6']['os2web_borger_dk_weekly_borger_dk_menus_import'] = array(
+  $form['os2web_borger_dk_settings_6']['os2web_borger_dk_weekly_borger_dk_menus_import'] = array(
     '#type' => 'checkbox',
     '#title' => t('Should Borger.dk-menus be updated weekly'),
     '#description' => t('Check to enable weekly menu-import from Borger.dk (otherwise menus are imported daily)'),

@@ -1150,13 +1150,33 @@ function _os2web_borger_dk_forms_cronbatch($force_update = FALSE) {
   $this_run = time();
   $last_run = variable_get('os2web_borger_dk_form_last_update', $this_run);
   $form_menu_vid = variable_get('os2web_borger_dk_form_menu_vid', FALSE);
+  $other_term_tid = variable_get('os2web_borger_dk_form_menu_tid_other', FALSE);
   $tag_articles = variable_get('os2web_borger_dk_form_autotagging', $force_update);
   $errors = array();
 
-  if (FALSE === $form_menu_vid) {
+  if (($force_update) || FALSE === $form_menu_vid) {
+    // Let us find the vocabulary id, and store it for good.
     $form_menu_vid = db_query("SELECT vid FROM {taxonomy_vocabulary} WHERE machine_name LIKE :menu_name", array(':menu_name' => 'os2web_borger_dk_form_menu'))->fetchField();
     variable_set('os2web_borger_dk_form_menu_vid', $form_menu_vid);
+    // We must also check if the "Other"-taxonomy-term exists.
+    $title = t("Miscellaneous links");
+    $item_check = _os2web_borger_dk_check_form_taxonomy_item($title, $title, $form_menu_vid);
+    if ($item_check === FALSE) {
+      // The 'Other' taxonomy-term does not exist and we create it.
+      //$log .= '=> (Check-result === FALSE)'."\n".'-> Calling : _os2web_borger_dk_insert_form_taxonomy_item() for uuid: '. $form_uuid ."\n";
+      $other_term_tid = _os2web_borger_dk_insert_form_taxonomy_item($title, $title, $form_menu_vid, NULL, 50);
+      //$log .= '=> Got new term-tid: '. $term_tid ."\n";
+      drupal_set_message('Got new "Other" term-tid: '. $other_term_tid .', for term-title: '. $title .', in vocabulary vid: '. $form_menu_vid);
+      variable_set('os2web_borger_dk_form_menu_tid_other', $other_term_tid);
+    }
+    else {
+      $other_term_tid = $item_check->tid;
+      variable_set('os2web_borger_dk_form_menu_tid_other', $other_term_tid);
+      drupal_set_message('Got existing "Other" term-tid: '. $other_term_tid .', for term-title: '. $title .', term: <pre>'. print_r($item_check, TRUE) .'</pre>');
+    }
   }
+
+  return;
 
   $old_form_serialized = variable_get('os2web_borger_dk_old_form_structure', FALSE);
   if ($force_update || (FALSE === $old_form_serialized)) {
@@ -1225,8 +1245,8 @@ function _os2web_borger_dk_forms_cronbatch($force_update = FALSE) {
                 $update_items[$record->external_id] = $record->nid;
               }
               //$log = '_os2web_borger_dk_forms_cronbatch found this list of articles to tag: '. print_r($update_items, TRUE) ."\n===================\n";
-              //error_log($log ."\n\n", 3, '/srv/www/log/debug_form_kle_5.log');
-              _os2web_borger_dk_form_tag_borger_dk_articles($form_menu_vid, $titles_availlable, $update_items);
+              //error_log($log ."\n\n", 3, '/home/peter/bellcom/log/debug_form_kle_5.log');
+              _os2web_borger_dk_form_tag_borger_dk_articles($form_menu_vid, $titles_availlable, $update_items, $other_term_tid);
             }
           }
         }
@@ -1279,13 +1299,13 @@ function _os2web_borger_dk_check_form_service_taxonomies($form_service_list, $vi
     // If this item has children those must be checked as well.
     if (($level < 3) && (isset($form_item[$nlname]) && is_array($form_item[$nlname]))) {
       //$log .= '-> Going recursive on level : '. $nlname ."\n===================\n";
-      //error_log($log ."\n\n", 3, '/srv/www/log/debug_form_kle_5.log');
+      //error_log($log ."\n\n", 3, '/home/peter/bellcom/log/debug_form_kle_5.log');
       //$log = '';
       _os2web_borger_dk_check_form_service_taxonomies($form_item[$nlname], $vid, $term_tid, 1 + $level);
     }
     else {
       //$log .= '-> No children on this level: ==> form_item: '. print_r($form_item, TRUE) ."\n===================\n";
-      //error_log($log ."\n\n", 3, '/srv/www/log/debug_form_kle_5.log');
+      //error_log($log ."\n\n", 3, '/home/peter/bellcom/log/debug_form_kle_5.log');
       //$log = '';
     }
   }
@@ -1304,12 +1324,12 @@ function _os2web_borger_dk_check_form_taxonomy_item($uuid, $name, $vid, $ptid = 
       }
     }
   }
-  //error_log($log, 3, '/srv/www/log/debug_form_kle_5.log');
+  //error_log($log, 3, '/home/peter/bellcom/log/debug_form_kle_5.log');
 
   return $check;
 }
 
-function _os2web_borger_dk_insert_form_taxonomy_item($uuid, $name, $vid, $ptid = NULL) {
+function _os2web_borger_dk_insert_form_taxonomy_item($uuid, $name, $vid, $ptid = NULL, $weight = NULL) {
   $term = new stdClass();
   $term->vid = $vid;
   $term->name = trim($name);
@@ -1320,9 +1340,14 @@ function _os2web_borger_dk_insert_form_taxonomy_item($uuid, $name, $vid, $ptid =
     $term->parent = $ptid;
   }
 
+  // If a weight is given we must also set that.
+  if (isset($weight)) {
+    $term->weight = $weight;
+  }
+
   // Then we can insert the new taxonomy term.
   taxonomy_term_save($term);
-  //error_log('_os2web_borger_dk_insert_form_taxonomy_item(). saved this term: '. print_r($term, TRUE) ."\n\n", 3, '/srv/www/log/debug_form_kle_5.log');
+  //error_log('_os2web_borger_dk_insert_form_taxonomy_item(). saved this term: '. print_r($term, TRUE) ."\n\n", 3, '/home/peter/bellcom/log/debug_form_kle_5.log');
 
   // We return the tid of the newly created term.
   return $term->tid;
@@ -2258,7 +2283,7 @@ function _os2web_borger_dk_GetAllSites($wsdl = 'https://www.borger.dk/_vti_bin/b
   // Then we can start using a new soap-client to find the article-ID from the Borger.dk-URL
   $client = new SoapClient($wsdl, array('exceptions' => 0));
   // First we make sure to keep requests/minute within given limits.
-  _os2web_borger_dk_articles_check_webservice_constraints();
+  _os2web_borger_dk_check_webservice_constraints();
   // Then we execute our webservice-request.
   $result_list = $client->GetAllSites();
   if (is_soap_fault($result_list)) {
@@ -2357,7 +2382,7 @@ function _os2web_borger_dk_build_borger_dk_menustructure(&$menu, $new_item) {
   return FALSE;
 }
 
-function _os2web_borger_dk_form_tag_borger_dk_articles($vid, $titles_availlable = array(), $update_items = array()) {
+function _os2web_borger_dk_form_tag_borger_dk_articles($vid, $titles_availlable = array(), $update_items = array(), $other_tid = FALSE) {
   foreach ($titles_availlable as $id => $item) {
     // First we check if this is an imported article or not.
     $aid = (isset($item['ArticleID'])) ? $item['ArticleID'] : FALSE;
@@ -2380,6 +2405,21 @@ function _os2web_borger_dk_form_tag_borger_dk_articles($vid, $titles_availlable 
         // We only save/update the node if any terms were attached.
         if ($save_node) {
           node_save($node);
+        }
+        else {
+          // None of the taxonomy-terms given were found among the
+          // FORM-taxonomies. So we must tag this article with the
+          // "Other"-tag.
+          if ($other_tid) {
+            $term = taxonomy_term_load($other_tid);
+            $node->field_os2web_borger_dk_formterm['und'][$other_tid] = (array) $term;
+            node_save($node);
+          }
+          else {
+            $path = 'node/'. $node->nid;
+            $msg = 'Could not tag the article with nid=%nid (link: %url), with the "Other"-tag. No such tag exists.';
+            watchdog('Borger.dk-articles', $msg, $variables = array('%nid' => $node->nid, '%url' => l($path, $path)));
+          }
         }
       }
     }
