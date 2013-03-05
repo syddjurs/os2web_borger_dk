@@ -182,12 +182,18 @@ function os2web_borger_dk_form_alter(&$form, &$form_state, $form_id) {
                 preg_match("/<div class=\"mArticle" . $microno . " mArticle\">(.*?)\r\n    <\/div>/s", $div[$key], $match2);
                 $micro_text = isset($match2[1]) ? $match2[1] : '';
 
+                if ($microno >= 10) {
+                  $weight = '6.' . ($microno - 10);
+                }
+                else {
+                  $weight = '5.'.$microno;
+                }
                 // For each microarticle we build a fieldset, a textfield for
                 // title, a textarea for div content and a checkbox for
                 // visibility option.
                 $form['os2web_borger_dk_micro_settings_' . $microno] = array(
                   '#type' => 'fieldset',
-                  '#weight' => '6.'.$microno,
+                  '#weight' => $weight,
                 );
 
                 $form['os2web_borger_dk_micro_settings_' . $microno][$h2_text_field] = array(
