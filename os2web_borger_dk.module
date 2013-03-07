@@ -180,6 +180,9 @@ function os2web_borger_dk_form_alter(&$form, &$form_state, $form_id) {
 
                 // Then we get the div content.
                 preg_match("/<div class=\"mArticle" . $microno . " mArticle\">(.*?)\r\n    <\/div>/s", $div[$key], $match2);
+                if (empty($match2[1])) {
+                  preg_match("/<div class=\"mArticle" . $microno . " mArticle\">(.*?)<\/div>    /s", $div[$key], $match2);
+                }
                 $micro_text = isset($match2[1]) ? $match2[1] : '';
 
                 if ($microno >= 10) {
@@ -1852,6 +1855,9 @@ function _os2web_borger_dk_create_html_from_xml($xml, $search = NULL, $replace =
     '&Oslash;' => '%C3%98',
     '&aring;'  => '%C3%A5',
     '&Aring;'  => '%C3%85',
+    '&rsquo;' => '%26rsquo%3B',
+    '&ndash;' => '%26ndash%3B',
+    '&eacute;' => '%26eacute%3B',
   );
   // If the function is called with a special replacement-string we add
   // the search- and replace-strings to the default substitution array.
