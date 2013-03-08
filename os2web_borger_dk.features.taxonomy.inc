@@ -10,9 +10,9 @@
 function os2web_borger_dk_taxonomy_default_vocabularies() {
   return array(
     'os2web_borger_dk_form_menu' => array(
-      'name' => 'Borger.dk FORM Emneord',
-      'machine_name' => 'os2web_borger_dk_form_menu',
-      'description' => 'FORM taxonomy used by Borger.dk menus and articles',
+      'name' => 'Borger.dk Menu Emneord',
+      'machine_name' => 'os2web_borger_dk_menu_taxonomy',
+      'description' => 'Borger.dk menu items as taxonomy terms',
       'hierarchy' => '0',
       'module' => 'taxonomy',
       'weight' => '0',

@@ -190,6 +190,21 @@ function os2web_borger_dk_settings_form($form, $form_state) {
     '#default_value' => variable_get('os2web_borger_dk_weekly_borger_dk_menus_import', 0),
   );
 
+  $disabled = FALSE;
+  $description = '';
+  $menus_import = variable_get('os2web_borger_dk_menus_import', 0);
+  if ($menus_import == 0) {
+    $disabled = TRUE;
+    $description = t('You must activate "Import and utilize Borger.dk-menus" and save the settings before this button can be used');
+  }
+  $form['os2web_borger_dk_settings_6']['import_menu_and_articles_now'] = array(
+    '#type' => 'submit',
+    '#value' => 'Import Borger.dk-menu and articles now',
+    '#submit' => array('os2web_borger_dk_import_now_form_submit'),
+    '#disabled' => $disabled,
+    '#description' => $description,
+  );
+
   $form['os2web_borger_dk_settings_7'] = array(
     '#type' => 'fieldset',
     '#title' => t('Microarticles visibility and editability'),
@@ -220,16 +235,16 @@ function os2web_borger_dk_settings_form($form, $form_state) {
   $admin_municipality = variable_get('os2web_borger_dk_municipality_active');
   $form['os2web_borger_dk_settings_8'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Active Municipality import option'),
+    '#title' => t('Municipality import option'),
     '#collapsible' => TRUE,
     '#group' => 'vertical_settings_tab',
   );
   $form['os2web_borger_dk_settings_8']['os2web_borger_dk_municipality_active'] = array(
     '#type' => 'select',
-    '#title' => t('Show and select Municipality'),
+    '#title' => t('Select municipality'),
 
     '#options' => $muni_items,
-    '#description' => t('Check to import specific articles according to Municipality from Borger.dk '),
+    '#description' => t('Check to import articles from Borger.dk according to municipality.'),
     '#default_value' => $admin_municipality,
     );
   return system_settings_form($form);
