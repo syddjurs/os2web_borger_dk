@@ -928,6 +928,7 @@ function os2web_borger_dk_node_submit(&$node, $form, &$form_state) {
 
       // And we update all the node-fields with the article-values.
       $node = new stdClass();
+      $node->language = LANGUAGE_NONE;
       $node->created = !empty($node->date) ? strtotime($node->date) : REQUEST_TIME;
       $node->validated = TRUE;
       // A user might assign the node author by entering a user name in the node
