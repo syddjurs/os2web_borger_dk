@@ -54,13 +54,7 @@ function os2web_borger_dk_articles_debug_form($form, $form_state) {
     '#value'  => 'Debug Cron Borger.dk-Menu now',
     '#submit' => array('os2web_borger_dk_debug_form_submit')
   );
-/*
-  $form['delete_form'] = array(
-    '#type'   => 'submit',
-    '#value'  => 'Debug Cron FORM-taxonomies now',
-    '#submit' => array('os2web_borger_dk_debug_form_submit')
-  );
-*/
+
   return $form;
 }
 
@@ -1102,7 +1096,7 @@ function _os2web_borger_dk_menus_cronbatch($force_update = FALSE) {
   // links (ie. links that can not be tagged succesfully with vocabulary).
   if (($force_update) || FALSE === $menu_vid) {
     // Let us find the vocabulary id, and store it for good.
-    $form_menu_vid = db_query("SELECT vid FROM {taxonomy_vocabulary} WHERE machine_name LIKE :menu_name", array(':menu_name' => 'os2web_borger_dk_menu_taxonomy'))->fetchField();
+    $menu_vid = db_query("SELECT vid FROM {taxonomy_vocabulary} WHERE machine_name LIKE :menu_name", array(':menu_name' => 'os2web_borger_dk_menu_emneord'))->fetchField();
     variable_set('os2web_borger_dk_form_menu_vid', $menu_vid);
     // We must also check if the "Other"-taxonomy-term exists.
     $title = t("Miscellaneous links");
@@ -1113,14 +1107,12 @@ function _os2web_borger_dk_menus_cronbatch($force_update = FALSE) {
       $other_term_tid = _os2web_borger_dk_insert_menu_taxonomy_item("Miscellaneous links", $title, $menu_vid, NULL, 50);
       //$log .= '=> Got new term-tid: '. $term_tid ."\n";
       $other_term = taxonomy_term_load($other_term_tid);
-      drupal_set_message('Got new "Other" term-tid: '. $other_term_tid .', for term-title: '. $title .', in vocabulary vid: '. $menu_vid);
       variable_set('os2web_borger_dk_form_menu_tid_other', $other_term_tid);
     }
     else {
       $other_term = $item_check;
       $other_term_tid = $item_check->tid;
       variable_set('os2web_borger_dk_form_menu_tid_other', $other_term_tid);
-      drupal_set_message('Got existing "Other" term-tid: '. $other_term_tid .', for term-title: '. $title .', term: <pre>'. print_r($item_check, TRUE) .'</pre>');
     }
   }
 
@@ -1149,6 +1141,9 @@ function _os2web_borger_dk_menus_cronbatch($force_update = FALSE) {
       );
     }
   }
+  //$log = '_os2web_borger_dk_build_borger_dk_menustructure() created this new menu: '. print_r($my_menu, TRUE) ."\n\n";
+  //$log .= '_os2web_borger_dk_build_borger_dk_menustructure() returned these errors: '. print_r($errors, TRUE) ."\n\n";
+  //error_log($log, 3, '/home/peter/bellcom/log/debug_menu_tagging_1.log');
 
   // If no errors occured we create Drupal-menus from the menu-structure.
   if (empty($errors)) {
@@ -1177,11 +1172,14 @@ function _os2web_borger_dk_menus_cronbatch($force_update = FALSE) {
           $errors[] = $eitem;
         }
       }
+      //$log = '_os2web_borger_dk_insert_links_into_menu() returned these errors: '. print_r($errors, TRUE) ."\n\n";
 
       // Then we check the taxonomy for the new menu-structure.
       $new_menu = $my_menu[1]['nl'];
       _os2web_borger_dk_check_menu_taxonomies($new_menu, $menu_vid);
       //$my_menu[1]['nl'] = $new_menu;
+      //$log .= '_os2web_borger_dk_check_menu_taxonomies() created this new menu: '. print_r($my_menu, TRUE) ."\n\n";
+      //error_log($log, 3, '/home/peter/bellcom/log/debug_menu_tagging_1.log');
 
       // After the taxonomies have been updated/created we check
       // if the imported articles should be tagged using the terms
@@ -1193,12 +1191,17 @@ function _os2web_borger_dk_menus_cronbatch($force_update = FALSE) {
         $sql = 'SELECT n.nid, ba.external_id FROM {node} AS n LEFT JOIN {os2web_borger_dk_article} AS ba ON n.nid = ba.nid WHERE n.type LIKE :node_type';
         $result = db_query($sql, array(':node_type' => 'os2web_borger_dk_article'));
         foreach ($result as $record) {
-          $update_items[$record->external_id] = $record->nid;
+          if (isset($record->external_id) && isset($record->nid)) {
+            $update_items[$record->external_id] = $record->nid;
+          }
         }
         //$log = '_os2web_borger_dk_forms_cronbatch found this list of articles to tag: '. print_r($update_items, TRUE) ."\n===================\n";
-        //error_log($log ."\n\n", 3, '/home/peter/bellcom/log/debug_form_kle_5.log');
+        //error_log($log ."\n\n", 3, '/home/peter/bellcom/log/debug_menu_tagging_1.log');
+
         $not_tagged = _os2web_borger_dk_tag_borger_dk_articles($new_menu, $update_items);
 
+        //$log .= '_os2web_borger_dk_tag_borger_dk_articles() returned this list of untagged articles: '. print_r($not_tagged, TRUE) ."\n\n";
+        //error_log($log, 3, '/home/peter/bellcom/log/debug_menu_tagging_1.log');
         // If some articles were not tagged we tag them with the "Other"-tag.
         if (isset($not_tagged) && !empty($not_tagged)) {
           foreach ($not_tagged as $lid => $item) {
@@ -1211,8 +1214,6 @@ function _os2web_borger_dk_menus_cronbatch($force_update = FALSE) {
           }
         }
       }
-      //$log  = '_os2web_borger_dk_check_menu_service_taxonomies() returned this new menu: '. print_r($new_menu, TRUE) ."\n\n";
-      //error_log($log, 3, '/home/peter/bellcom/log/menu_taxonomy_structure.log');
 
       // Finally we update the timestamp for when our last succesfull menu-
       // update took place (that would be now).
@@ -1229,7 +1230,7 @@ function _os2web_borger_dk_menus_cronbatch($force_update = FALSE) {
     $msg = 'One or more errors occured while building the new Borger.dk menu-structure locally. Last succesful update was at: %success. Listing errors in watchdog.';
     watchdog('Borger.dk-articles', $msg, $variables = array('%success' => $updated_at));
     foreach ($errors as $error) {
-      $msg = 'Could not find the parent item in the Borger.dk-menu for this Borger.dk-menu item: '. print_r($error['item'], TRUE) ."\n";
+      $msg = 'Could not find the right menu placement for this Borger.dk-menu item: '. print_r($error['item'], TRUE) ."\n";
       watchdog('Borger.dk-articles', $msg);
     }
   }
@@ -1394,8 +1395,9 @@ function _os2web_borger_dk_menu_tree_search($a, $subkey) {
     }
   }
   else {
-    $log = 'ERROR IN _os2web_borger_dk_menu_tree_search(): The given menu is NOT an array: '. print_r($a, TRUE) ."\n";
-    error_log($log, 3, '/home/peter/bellcom/log/menu_taxonomy_structure.log');
+    //$log = 'ERROR IN _os2web_borger_dk_menu_tree_search(): The given menu is NOT an array: '. print_r($a, TRUE) ."\n";
+    //error_log($log, 3, '/home/peter/bellcom/log/debug_menu_tagging_1.log');
+    // TODO: Insert error-handling here. Give a watchdog warning message
   }
 
   return FALSE;
@@ -1435,7 +1437,7 @@ function _os2web_borger_dk_check_menu_taxonomies(&$menu_structure, $vid, $ptid =
 
 function _os2web_borger_dk_check_menu_taxonomy_item($uuid, $name, $vid, $ptid = NULL) {
   $check = FALSE;
-  $term_result = taxonomy_get_term_by_name($name, 'os2web_borger_dk_menu_taxonomy');
+  $term_result = taxonomy_get_term_by_name($name, 'os2web_borger_dk_menu_emneord');
   if (!empty($term_result)) {
     foreach($term_result as $tid => $term) {
       if (($vid == $term->vid) && ($uuid == $term->description)) {
@@ -1494,6 +1496,10 @@ function os2web_borger_dk_import_now_form_submit($form, &$form_state) {
         $full_id_list[] = $title['ArticleID'];
         $max_count += 1;
       }
+
+      // TODO: REMOVE THIS DEBUG-STATEMENT BEFORE GOING LIVE:
+      //if ($max_count >= 9) { break(1); }
+
     }
     // We add 1 to the max_count because we have to run the menu-import
     // after all the articles have been imported.
@@ -1507,7 +1513,7 @@ function os2web_borger_dk_import_now_form_submit($form, &$form_state) {
     }
 
     // Then import the menu from Borger.dk and tag all imported articles.
-    $operations[] = array('_os2web_borger_dk_menus_cronbatch', array(TRUE));
+    $operations[] = array('_os2web_borger_dk_menus_cronbatch_wrapper', array($max_count));
 
     $batch = array(
       'operations' => $operations,
@@ -1525,7 +1531,7 @@ function os2web_borger_dk_import_now_form_submit($form, &$form_state) {
 
 function _os2web_borger_dk_batch_article_import($external_id_list, $max_count, $update_items, &$context) {
   //error_log('_os2web_borger_dk_batch_article_import called for these external_ids: '. print_r($external_id_list, TRUE) ."\n\n", 3, '/srv/www/log/borger_dk_batch.log');
-  $log = '_os2web_borger_dk_batch_article_import called for these external_ids: '. print_r($external_id_list, TRUE) ."\n\n";
+  //$log = '_os2web_borger_dk_batch_article_import called for these external_ids: '. print_r($external_id_list, TRUE) ."\n\n";
   $wsdl = variable_get('os2web_borger_dk_webservice', 'https://www.borger.dk/_vti_bin/borger/ArticleExport.svc?wsdl');
   if (empty($context['sandbox'])) {
     $context['sandbox'] = array();
@@ -1533,24 +1539,24 @@ function _os2web_borger_dk_batch_article_import($external_id_list, $max_count, $
     //$context['sandbox']['current_node'] = 0;
     $context['sandbox']['max'] = $max_count;
     //error_log('--> First run created this sandbox: '. print_r($context['sandbox'], TRUE) ."\n\n", 3, '/srv/www/log/borger_dk_batch.log');
-    $log .= '--> First run created this sandbox: '. print_r($context['sandbox'], TRUE) ."\n\n";
-    $log .= '--> First run got this context: '. print_r($context, TRUE) ."\n\n";
+    //$log .= '--> First run created this sandbox: '. print_r($context['sandbox'], TRUE) ."\n\n";
+    //$log .= '--> First run got this context: '. print_r($context, TRUE) ."\n\n";
   }
   // Step through the list of external-ID's and import each of
   // the Borger.dk-articles mentioned.
-  $log .= '--> Stepping through each of the given external_ids:'."\n";
+  //$log .= '--> Stepping through each of the given external_ids:'."\n";
   foreach ($external_id_list as $eid) {
-    $log .= '--> Looking at external_id:'. $eid ."\n";
+    //$log .= '--> Looking at external_id:'. $eid ."\n";
     // Import the Borger.dk-article with the given ArticleID.
     $article = _os2web_borger_dk_GetArticleByID($eid, $wsdl, FALSE);
     if (empty($article['Exceptions']) && empty($article['error'])) {
       $title = $article['title'];
-      $log .= '--> Succesfully retrieved article with title:'. $title ."\n";
+      //$log .= '--> Succesfully retrieved article with title:'. $title ."\n";
 
       $nid = FALSE;
       // Then check if this node should be updated or created.
       if (!isset($update_items[$eid])) {
-        $log .= '--> This is an unknown article that must be created before updated.'."\n";
+        //$log .= '--> This is an unknown article that must be created before updated.'."\n";
         // This article should be created before being updated.
         $node = new stdClass();
         $node->type = 'os2web_borger_dk_article';
@@ -1564,7 +1570,7 @@ function _os2web_borger_dk_batch_article_import($external_id_list, $max_count, $
         $nid = $node->nid;
       }
       else {
-        $log .= '--> This is a known article that must be updated.'."\n";
+        //$log .= '--> This is a known article that must be updated.'."\n";
         // This is an already imported article, and we should
         // update the node-content.
         $nid = $update_items[$eid];
@@ -1574,7 +1580,7 @@ function _os2web_borger_dk_batch_article_import($external_id_list, $max_count, $
       // article from Borger.dk.
       if ($nid) {
         _os2web_borger_dk_update_node_content($nid, $article);
-        $log .= '==> NID is known and the article has been updated.'."\n";
+        //$log .= '==> NID is known and the article has been updated.'."\n";
       }
       $context['results'][] = $nid . ' : ' . check_plain($title);
       $context['message'] = 'Imported title: ' . check_plain($title);
@@ -1582,16 +1588,16 @@ function _os2web_borger_dk_batch_article_import($external_id_list, $max_count, $
     else {
       $context['results'][] = 'Error: Could not import article with ArticleID: ' . $eid;
       $context['message'] = 'Error: Could not import article with ArticleID: ' . $eid;
-      $log .= '==> Could not retrieve article with external_id:'. $eid ."\n";
-      $log .= '==> Got this error:'. print_r($article['error'], TRUE) ."\n";
-      $log .= '==> Got this Exception:'. print_r($article['Exceptions'], TRUE) ."\n";
+      //$log .= '==> Could not retrieve article with external_id:'. $eid ."\n";
+      //$log .= '==> Got this error:'. print_r($article['error'], TRUE) ."\n";
+      //$log .= '==> Got this Exception:'. print_r($article['Exceptions'], TRUE) ."\n";
     }
 
     // Update our progress information.
     $context['sandbox']['progress']++;
   }
-  $log .= '=> Progress now: '. $context['sandbox']['progress'] ."\n";
-  $log .= '=> Max items: '. $context['sandbox']['max'] ."\n";
+  //$log .= '=> Progress now: '. $context['sandbox']['progress'] ."\n";
+  //$log .= '=> Max items: '. $context['sandbox']['max'] ."\n";
   //$log .= '=> Results now: '. print_r($context['results'], TRUE) ."\n";
 
   // Inform the batch engine that we are not finished,
@@ -1600,14 +1606,26 @@ function _os2web_borger_dk_batch_article_import($external_id_list, $max_count, $
     //$context['finished'] = ($context['sandbox']['progress'] >= $context['sandbox']['max']) ? 1 : 0;
   //}
   $context['finished'] = 1;
-  $log .= '=> finished: '. $context['finished'] ."\n";
-  error_log($log ."\n", 3, '/srv/www/log/borger_dk_batch.log');
+  //$log .= '=> finished: '. $context['finished'] ."\n";
+  //error_log($log ."\n", 3, '/home/peter/bellcom/log/debug_menu_tagging_1.log');
+}
+
+/**
+ * Function _os2web_borger_dk_menus_cronbatch_wrapper()
+ * A batch-wrapper so that the cronbatch function can
+ * also be run via the browser, and not just as a cron-job.
+ */
+function _os2web_borger_dk_menus_cronbatch_wrapper($max_count, &$context) {
+  _os2web_borger_dk_menus_cronbatch(TRUE);
+  $context['sandbox']['progress']++;
+  $context['message'] = t("Importing the menu from Borger.dk, and tagging all imported articles.");
+  $context['finished'] = 1;
 }
 
 function os2web_borger_dk_batch_article_import_finished($success, $results, $operations) {
   if ($success) {
     drupal_set_message(t('@count results processed.', array('@count' => count($results))));
-    drupal_set_message(t('The final result was "%final"', array('%final' => end($results)))); 
+    drupal_set_message(t('The final result was "%final"', array('%final' => end($results))));
   }
   else {
     $error_operation = reset($operations);
@@ -1616,16 +1634,11 @@ function os2web_borger_dk_batch_article_import_finished($success, $results, $ope
   drupal_goto('admin/config/os2web_borger_dk');
 }
 
-function _os2web_borger_dk_batch_menu_import($force_update = FALSE, &$context) {
-  _os2web_borger_dk_menus_cronbatch($force_update);
-  $context['sandbox']['progress']++;
-  $context['message'] = t("Importing the menu from Borger.dk, and tagging all imported articles.");
-  $context['finished'] = TRUE;  
-}
-
 function os2web_borger_dk_debug_form_submit($form, &$form_state) {
   if (($form_state['submitted'] == 1) && ($form_state['input']['op'] == 'Debug Cron Borger.dk-Menu now')) {
     _os2web_borger_dk_menus_cronbatch(TRUE);
+    //_debug_remove_add_menu();
+    //_debug_delete_taxonomy_terms();
   }
 
   drupal_goto('admin/borgerdk/debug');
@@ -1646,12 +1659,37 @@ function _debug_remove_add_menu() {
   menu_save($new_menu);
 }
 
+
+/**
+os2web_borger_dk_menu_taxonomy --> os2web_borger_dk_menu_emneord
+
+Here's a little tip to create a vocabulary programmatically in Drupal 7.
+
+taxonomy_vocabulary_save((object) array(
+  'name' => 'Vocabulary Name',
+  'machine_name' => 'vocab_short_name',
+));
+
+And, just in case you need to create a taxonomy term in your new vocabulary, you can do it with taxonomy_term_save. But first, we need to get the ID of the vocabulary we just created.
+
+$vid = db_query("SELECT vid FROM {taxonomy_vocabulary} WHERE machine_name = 'vocab_short_name'")->fetchField();
+
+Now, you can save your term with taxonomy_term_save.
+
+taxonomy_term_save((object) array(
+  'name' => 'Term name',
+  'vid' => $vid,
+));
+
+
+*/
+
 function _debug_delete_taxonomy_terms() {
   $menu_vid = variable_get('os2web_borger_dk_form_menu_vid', FALSE);
   
   if (FALSE === $menu_vid) {
     // Let us find the vocabulary id, and store it for good.
-    $menu_vid = db_query("SELECT vid FROM {taxonomy_vocabulary} WHERE machine_name LIKE :menu_name", array(':menu_name' => 'os2web_borger_dk_menu_taxonomy'))->fetchField();
+    $menu_vid = db_query("SELECT vid FROM {taxonomy_vocabulary} WHERE machine_name LIKE :menu_name", array(':menu_name' => 'os2web_borger_dk_menu_emneord'))->fetchField();
     variable_set('os2web_borger_dk_form_menu_vid', $menu_vid);
   }
   $terms = taxonomy_get_tree($menu_vid);
@@ -2550,6 +2588,10 @@ function _os2web_borger_dk_tag_borger_dk_articles($menu = array(), $update_items
             if ($aid && isset($update_items[$aid])) {
               $node = node_load($update_items[$aid]);
               $node->field_os2web_borger_dk_formterm['und'][$tid] = (array) $term;
+
+              //$log = '_os2web_borger_dk_tag_borger_dk_articles tagging node with id: '. $node->nid .', with this tag: '.print_r($term, TRUE) ."\n===================\n";
+              //error_log($log ."\n\n", 3, '/home/peter/bellcom/log/debug_menu_tagging_1.log');
+
               node_save($node);
             }
           }

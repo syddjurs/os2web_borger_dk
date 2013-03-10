@@ -195,7 +195,8 @@ function os2web_borger_dk_settings_form($form, $form_state) {
   $menus_import = variable_get('os2web_borger_dk_menus_import', 0);
   if ($menus_import == 0) {
     $disabled = TRUE;
-    $description = t('You must activate "Import and utilize Borger.dk-menus" and save the settings before this button can be used');
+    $description = t('If you want to import the Borger.dk menu you must first activate "Import and utilize Borger.dk-menus" and save the settings');
+    drupal_set_message($description);
   }
   $form['os2web_borger_dk_settings_6']['import_menu_and_articles_now'] = array(
     '#type' => 'submit',
