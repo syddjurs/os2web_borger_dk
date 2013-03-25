@@ -3,13 +3,15 @@ div .microArticle h2 {
   background-position: 98% 0;
   background-repeat: no-repeat;
   border-top: 1px solid #dddddd;
+  font-family: inherit;
+  font-size: 18px;
   margin-top: 0px;
   margin-bottom: 10px;
 }
 
 .borger_dk_billede img {
-  width: 316px;
-  height: 243px;
+  width: 200px;
+  height: 180px;
   float: right;
 }
 .borger_dk_header p {
@@ -23,7 +25,7 @@ div .microArticle h2 {
 }
 
 .borger_dk-region-stack2.gul-boks a {
-  color: #2D2D2D;
+  color: #2d2d2d;
   font-size: 13px;
   list-style-type: disc;
   text-decoration: underline;
@@ -38,19 +40,24 @@ div .microArticle h2 {
 .borger_dk-region-stack3 .inside .borger_dk-body.node-body div a:link a:visited,
 .borger_dk-region-stack3 .inside .borger_dk-body.node-body div div ul li p a,
 .borger_dk-region-stack3 .inside .borger_dk-field_os2web-borger-dk-legislati div a {
-  color: #2D2D2D;
+  color: #2d2d2d;
   font-size: 13px;
   list-style-type: disc;
   text-decoration: underline;
 }
 .borger_dk-region-stack4 .inside .borger_dk-field_os2web-borger-dk-recommend ul li a,
 .borger_dk-region-stack4 .inside .borger_dk-field_os2web-borger-dk-shortlist ul li a {
-  color: #2D2D2D;
+  color: #2d2d2d;
   font-size: 13px;
   list-style-type: disc;
   text-decoration: underline;
 }
 
+.borger_dk-region-stack3 .inside .borger_dk-body.node-body div div ul,
+.borger_dk-region-stack4 .inside .borger_dk-field_os2web-borger-dk-recommend ul,
+.borger_dk-region-stack4 .inside .borger_dk-field_os2web-borger-dk-shortlist ul {
+    margin: 0 0 1.5em 2em;
+}
 .borger_dk-field_os2web-borger-dk-byline {
   float: right;
   padding-right: 10px;
