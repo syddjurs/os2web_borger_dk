@@ -110,8 +110,13 @@
       if ($admin_display_fields[$type]) {
         $arr = $node-> $type;
 
-      if (count($arr) > 0 && $type != 'title') {
-            $content_field[$type] = $arr['und']['0']['value'];
+      if (count($arr) > 0 && $type != 'title' && $type != 'field_billede') {
+          $content_field[$type] = $arr['und']['0']['value'];
+        }
+        elseif (count($arr) > 0 && $type == 'field_billede') {
+          $filepath = $arr['und']['0']['uri'];
+          $alt = $arr['und']['0']['alt'];
+          $content_field[$type] = theme('image', array('path' => $filepath, 'alt' => $alt, 'title' => $alt));
         }
         else {
           $content_field[$type] = '';
@@ -220,7 +225,7 @@
       print "</div></div></div>";
     }
     if (!empty($content_field['field_os2web_borger_dk_recommend'])) {
-      print " <div class='borger_dk-region-stack4'";
+      print " <div class='borger_dk-region-stack4'>";
       print "<div class= 'inside'>";
       print "<div class='borger_dk-field_os2web-borger-dk-recommend'>";
       print render($content_field['field_os2web_borger_dk_recommend']);
