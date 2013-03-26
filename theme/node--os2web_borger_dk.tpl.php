@@ -163,13 +163,13 @@
         // End of microarticles.
         // If EDITOR set this field to be hidden.
         if ($fields[$type] == '0') {
-            $content[$type] = '';
+            $content_field[$type] = '';
         }
       }
 
       // If ADMIN set this field to be hidden.
       else {
-          $content[$type] = '';
+          $content_field[$type] = '';
       }
     }
     drupal_add_js(drupal_get_path('module', 'os2web_borger_dk') . '/js/os2web_borger_dk.js', 'file');
@@ -181,7 +181,7 @@
     //}
   }
   ?>
-  
+
   <?php
     if (!empty($content_field['field_billede'])) {
       print "<div class='borger_dk_billede'>";
