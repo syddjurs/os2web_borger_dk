@@ -156,7 +156,7 @@
             $content_field[$type] = $show_div;
           }
         }
-        else {
+        elseif ($type == 'body') {
           $content_field['body'] = $node->body['und']['0']['value'];
         }
 

@@ -485,7 +485,7 @@ function os2web_borger_dk_process_checkboxes_os2web_borger_dk_article(&$element)
   $admin_display_fields = variable_get('os2web_borger_dk_display', array(NULL));
   if (!empty($element)) {
     foreach (element_children($element) as $key) {
-      if (!isset($admin_display_fields[$key])) {
+      if (!isset($admin_display_fields[$key]) || $admin_display_fields[$key] == '0') {
         $element[$key]['#attributes'] = array('disabled' => 'disabled');
         $element[$key]['#description'] = t('Please go to OS2web Borger.dk settings to change the visibility for this field');
       }
