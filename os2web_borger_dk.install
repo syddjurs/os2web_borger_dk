@@ -13,6 +13,7 @@ function os2web_borger_dk_uninstall() {
   variable_del('os2web_borger_dk_editable');
   variable_del('os2web_borger_dk_nightly_article_sync');
   variable_del('os2web_borger_dk_last_update');
+  variable_del('os2web_borger_dk_menus_last_update');
   variable_del('os2web_borger_dk_webservice');
   variable_del('os2web_borger_dk_webservice_request_limit');
   variable_del('os2web_borger_dk_webservice_time_limit');
@@ -26,6 +27,14 @@ function os2web_borger_dk_uninstall() {
   variable_del('os2web_borger_dk_microarticle_active');
   variable_del('os2web_borger_dk_municipality_active');
   variable_del('os2web_borger_dk_municipality_list');
+  variable_del('os2web_borger_dk_weekly_borger_dk_menus_import');
+  variable_del('os2web_borger_dk_old_menu_structure');
+  variable_del('os2web_borger_dk_borger_dk_menu_name');
+  variable_del('os2web_borger_dk_not_found_menu_mlid');
+  variable_del('os2web_borger_dk_form_last_update');
+  variable_del('os2web_borger_dk_form_menu_vid');
+  variable_del('os2web_borger_dk_form_menu_tid_other');
+  variable_del('os2web_borger_dk_old_form_structure');
 
   if (db_table_exists('os2web_borger_dk_article')) {
     db_query('DROP TABLE {os2web_borger_dk_article}');
@@ -70,6 +79,8 @@ function os2web_borger_dk_install() {
   variable_set('os2web_borger_dk_municipality_active', '0');
   variable_set('os2web_borger_dk_nightly_article_sync', '0');
   variable_set('os2web_borger_dk_last_update', 1970);
+  variable_set('os2web_borger_dk_menus_last_update', 1970);
+  variable_set('os2web_borger_dk_form_last_update', 1970);
   variable_set('os2web_borger_dk_webservice', 'https://www.borger.dk/_vti_bin/borger/ArticleExport.svc?wsdl');
   variable_set('os2web_borger_dk_webservice_request_limit', 100);
   variable_set('os2web_borger_dk_webservice_time_limit', 60);
@@ -80,6 +91,13 @@ function os2web_borger_dk_install() {
   variable_set('os2web_borger_dk_menus_import', 0);
   variable_set('os2web_borger_dk_nightly_menu_sync', '0');
   variable_set('os2web_borger_dk_microarticle_active', '0');
+  variable_set('os2web_borger_dk_weekly_borger_dk_menus_import', 0);
+  variable_set('os2web_borger_dk_old_menu_structure', '');
+  variable_set('os2web_borger_dk_borger_dk_menu_name', 'Borger.dk menu');
+  variable_set('os2web_borger_dk_not_found_menu_mlid', 0);
+  variable_set('os2web_borger_dk_form_menu_vid', FALSE);
+  variable_set('os2web_borger_dk_form_menu_tid_other', FALSE);
+  variable_set('os2web_borger_dk_old_form_structure', FALSE);
   // Next we populate the titles-table for title-autocomplete
   _os2web_borger_dk_titles_cronbatch(TRUE);
 }
