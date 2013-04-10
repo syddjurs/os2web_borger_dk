@@ -78,6 +78,7 @@
  * @see template_process()
  */
 ?>
+<h1>HEJ</h1>
 <div id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?> clearfix"<?php print $attributes; ?>>
   <?php print render($title_prefix); ?>
 
@@ -89,7 +90,7 @@
 
 
   <div class="content clearfix"<?php print $content_attributes; ?>>
-  
+
   <?php
   if ($node->type == 'os2web_borger_dk_article') {
 
@@ -105,7 +106,7 @@
     }
 
     foreach ($admin_display_fields as $type => $value) {
-    
+
       // If ADMIN set this field to display.
       if ($admin_display_fields[$type]) {
         $arr = $node-> $type;
@@ -243,7 +244,7 @@
       }
       print "</div></div></div>";
     }
-      print render($content);
+//      print render($content);
     ?>
   </div>
 

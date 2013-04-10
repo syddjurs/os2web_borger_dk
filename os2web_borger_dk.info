@@ -4,6 +4,7 @@ core = 7.x
 package = Features
 php = 5.2.4
 project = os2web_borger_dk
+files[] = theme/node--os2web_borger_dk_article
 dependencies[] = ctools
 dependencies[] = features
 dependencies[] = media
