@@ -183,68 +183,78 @@
   ?>
 
   <?php
+   print "<div class='borger_dk-region-stack3'>
+            <div class='inside'>";
     if (!empty($content_field['field_billede'])) {
       print "<div class='borger_dk_billede'>";
       print render($content_field['field_billede']);
       print "</div>";
     }
 
-      if (!empty($content_field['field_os2web_borger_dk_header'])) {
+    if (!empty($content_field['field_os2web_borger_dk_header'])) {
       print "<div class='borger_dk_header'>";
       print render($content_field['field_os2web_borger_dk_header']);
       print "</div>";
     }
+    print "</div></div>";
   ?>
-
   <div class="content clearfix"<?php print $content_attributes; ?>>
   <?php
     if (!empty($content_field['field_os2web_borger_dk_selfservi'])) {
       print "<div class='borger_dk-region-stack2 gul-boks'>
-             <div class='toggle-related'><i class='button bum'></i></div>
+              <div class='toggle-related'><i class='button bum'>
+                </i>
+              </div>
               <div class='inside'>";
       print render($content_field['field_os2web_borger_dk_selfservi']);
-      print '</div>
+      print   '</div>
             </div>';
     }
 
   ?>
+  </div>
   <div class="content clearfix"<?php print $content_attributes; ?>>
   <?php
+    print "<div class='borger_dk-region-stack3'>
+            <div class='inside'>";
     if (!empty($content_field['body'])) {
-      print "<div class='borger_dk-region-stack3'>
-                <div class='inside'>
-                  <div class='borger_dk-body node-body'>";
+      print "<div class='borger_dk-body node-body'>";
       print render($content_field['body']);
       print '</div>';
       print "<div class='panel-separator'></div>";
-      if (!empty($content['field_os2web_borger_dk_legislati'])) {
-        print "<div class='borger_dk-field_os2web-borger-dk-legislati'>";
-        print render($content['field_os2web_borger_dk_legislati']);
-        print "</div>";
-      }
-      print "</div></div></div>";
     }
-    if (!empty($content_field['field_os2web_borger_dk_recommend'])) {
-      print " <div class='borger_dk-region-stack4'>";
-      print "<div class= 'inside'>";
-      print "<div class='borger_dk-field_os2web-borger-dk-recommend'>";
-      print render($content_field['field_os2web_borger_dk_recommend']);
+    if (!empty($content['field_os2web_borger_dk_legislati'])) {
+      print "<div class='borger_dk-field_os2web-borger-dk-legislati'>";
+      print render($content['field_os2web_borger_dk_legislati']);
       print "</div>";
-      print "<div class='panel-separator'></div>";
-      if (!empty($content_field['field_os2web_borger_dk_shortlist'])) {
-        print "<div class='borger_dk-field_os2web-borger-dk-shortlist'> ";
-        print render($content_field['field_os2web_borger_dk_shortlist']);
-        print "</div>";
-      }
-      if (!empty($content_field['field_os2web_borger_dk_byline'])) {
-        print "<div class='borger_dk-field_os2web-borger-dk-byline'> ";
-        print render($content_field['field_os2web_borger_dk_byline']);
-        print "</div>";
-      }
-      print "</div></div></div>";
     }
+    print "</div></div>";
+
+    print "<div class='borger_dk-region-stack4'>";
+    print   "<div class= 'inside'>";
+    if (!empty($content_field['field_os2web_borger_dk_recommend'])) { 
+      print   "<div class='borger_dk-field_os2web-borger-dk-recommend'>";
+      print     render($content_field['field_os2web_borger_dk_recommend']);
+      print   "</div>";
+      print   "<div class='panel-separator'></div>";
+      
+    }
+    if (!empty($content_field['field_os2web_borger_dk_shortlist'])) {
+      print   "<div class='borger_dk-field_os2web-borger-dk-shortlist'> ";
+      print     render($content_field['field_os2web_borger_dk_shortlist']);
+      print   "</div>";
+    }
+    if (!empty($content_field['field_os2web_borger_dk_byline'])) {
+      print   "<div class='borger_dk-field_os2web-borger-dk-byline'> ";
+      print    render($content_field['field_os2web_borger_dk_byline']);
+      print   "</div>";
+    }
+
+    print "</div></div>";
+    
 //      print render($content);
     ?>
+    </div>
   </div>
 
   <?php
