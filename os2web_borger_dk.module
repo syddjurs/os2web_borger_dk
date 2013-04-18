@@ -1267,7 +1267,7 @@ function _os2web_borger_dk_build_menu_structure($item, $parent_array, &$context)
           } 
         }
         // TODO:  ADD menu links to the menu page.
-        $body_content = '';
+       /* $body_content = '';
         $children = db_query('SELECT * FROM {menu_links} WHERE plid= :plid AND menu_name = :menu_name',
                               array('plid' => $pid['mlid'], 'menu_name' => 'borgerdkmenu2'))->fetchAssoc();
         if ($children) {
@@ -1279,7 +1279,7 @@ function _os2web_borger_dk_build_menu_structure($item, $parent_array, &$context)
         $node->body['und']['0']['safe_value'] = $body_content;
         $node->body['und'][0]['format'] = 'full_html';
         $node = node_submit($node);
-        node_save($node);
+        node_save($node);*/
       }
     // Update our progress information.
     $context['sandbox']['progress']++;
