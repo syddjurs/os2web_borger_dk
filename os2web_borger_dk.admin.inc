@@ -174,9 +174,9 @@ function os2web_borger_dk_settings_form($form, $form_state) {
     '#description' => t("The imported menu will be put into a local menu by the name given here."),
     '#default_value' => variable_get('os2web_borger_dk_borger_dk_menu_name', 'Borger.dk menu'),
   );
-  $sync_options = drupal_map_assoc(range(1, 24));
-  $sync_options[0] = t('Disabled (No menu syncronization)');
-  $form['os2web_borger_dk_settings_6']['os2web_borger_dk_nightly_menu_sync'] = array(
+  //$sync_options = drupal_map_assoc(range(1, 24));
+  //$sync_options[0] = t('Disabled (No menu syncronization)');
+  /*$form['os2web_borger_dk_settings_6']['os2web_borger_dk_nightly_menu_sync'] = array(
     '#type' => 'select',
     '#title' => t('Select when the menu-structure should be imported'),
     '#options' => $sync_options,
@@ -188,7 +188,7 @@ function os2web_borger_dk_settings_form($form, $form_state) {
     '#title' => t('Should Borger.dk-menus be updated weekly'),
     '#description' => t('Check to enable weekly menu-import from Borger.dk (otherwise menus are imported daily)'),
     '#default_value' => variable_get('os2web_borger_dk_weekly_borger_dk_menus_import', 0),
-  );
+  );*/
 
   $disabled = FALSE;
   $description = '';

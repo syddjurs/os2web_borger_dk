@@ -217,12 +217,26 @@
   <?php
     print "<div class='borger_dk-region-stack3'>
             <div class='inside'>";
+    if (!empty($content_field['field_os2web_borger_dk_pre_text'])) {
+      print "<div class='borger_dk-field_os2web-borger-dk-pre_text'>";
+      print render($content_field['field_os2web_borger_dk_pre_text']);
+      print '</div>';
+      print "<div class='panel-separator'></div>";
+    }
+
     if (!empty($content_field['body'])) {
       print "<div class='borger_dk-body node-body'>";
       print render($content_field['body']);
       print '</div>';
       print "<div class='panel-separator'></div>";
     }
+    if (!empty($content_field['field_os2web_borger_dk_post_text'])) {
+      print "<div class='borger_dk-field_os2web-borger-dk-post_text'>";
+      print render($content_field['field_os2web_borger_dk_post_text']);
+      print '</div>';
+      print "<div class='panel-separator'></div>";
+    }
+
     if (!empty($content['field_os2web_borger_dk_legislati'])) {
       print "<div class='borger_dk-field_os2web-borger-dk-legislati'>";
       print render($content['field_os2web_borger_dk_legislati']);
