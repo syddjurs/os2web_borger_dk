@@ -21,6 +21,7 @@ div.microArticle a {
 #borger_dk_header{
   font-family: "myriad-pro",Arial,Helvetica,sans-serif;
   font-size: 20px;
+  font-weight: 300;
   margin-left: 10px;
   padding: 0px 5px 10px 10px;
 }
