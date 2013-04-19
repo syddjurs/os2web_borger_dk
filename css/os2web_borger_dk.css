@@ -24,25 +24,26 @@ div.microArticle a {
   margin-left: 10px;
   padding: 0px 5px 10px 10px;
 }
-.borger_dk-region-stack2.os2web_borger_dk_selfservi {
+.os2web_borger_dk_selfservi {
   clear: both;
   padding: 10px 5px 10px 10px;
   background-color: #D9E5C3;
   border-radius: 7px 7px 7px 7px;
 }
 
-.borger_dk-region-stack2.os2web_borger_dk_selfservi h3 {
+.os2web_borger_dk_selfservi h3 {
   border-bottom: 1px solid #BBC5A8;
   color: #526A27;
 }
 
-.borger_dk-region-stack2.os2web_borger_dk_selfservi a {
+.os2web_borger_dk_selfservi ul li a, .os2web_borger_dk_selfservi a:link{
   color: #526A27;
   font-size: 13px;
   /*list-style-type: disc;
   text-decoration: underline;*/
 }
 
+.borger_dk-region-stack2,
 .borger_dk-region-stack3, .borger_dk-region-stack4 {
   clear: both;
   font-family: "myriad-pro",Arial,Helvetica,sans-serif;

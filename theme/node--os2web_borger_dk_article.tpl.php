@@ -201,13 +201,12 @@
   <div class="content clearfix"<?php print $content_attributes; ?>>
   <?php
     if (!empty($content_field['field_os2web_borger_dk_selfservi'])) {
-      print "<div class='borger_dk-region-stack2 os2web_borger_dk_selfservi'>
-              <div class='toggle-related'><i class='button bum'>
-                </i>
-              </div>
-              <div class='inside'>";
+      print "<div class='borger_dk-region-stack2'>
+              <div class='inside'>
+                <div class='os2web_borger_dk_selfservi'>";
       print render($content_field['field_os2web_borger_dk_selfservi']);
       print   '</div>
+              </div>
             </div>';
     }
 
