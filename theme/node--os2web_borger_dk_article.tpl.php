@@ -192,7 +192,7 @@
     }
 
     if (!empty($content_field['field_os2web_borger_dk_header'])) {
-      print "<div class='borger_dk_header'>";
+      print "<div class='borger_dk_header' id='borger_dk_header'>";
       print render($content_field['field_os2web_borger_dk_header']);
       print "</div>";
     }
@@ -201,7 +201,7 @@
   <div class="content clearfix"<?php print $content_attributes; ?>>
   <?php
     if (!empty($content_field['field_os2web_borger_dk_selfservi'])) {
-      print "<div class='borger_dk-region-stack2 gul-boks'>
+      print "<div class='borger_dk-region-stack2 os2web_borger_dk_selfservi'>
               <div class='toggle-related'><i class='button bum'>
                 </i>
               </div>
@@ -225,7 +225,8 @@
     }
 
     if (!empty($content_field['body'])) {
-      print "<div class='borger_dk-body node-body'>";
+      print "<div class='borger_dk-body node-body' id='borger_dk-body'>";
+      print "<div class='borger_dk_body_intro_text'>" . "Læs om " . $node->title . "</div>";
       print render($content_field['body']);
       print '</div>';
       print "<div class='panel-separator'></div>";
