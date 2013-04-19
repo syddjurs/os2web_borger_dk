@@ -195,15 +195,15 @@ function os2web_borger_dk_settings_form($form, $form_state) {
   $menus_import = variable_get('os2web_borger_dk_menus_import', 0);
   if ($menus_import == 0) {
     $disabled = TRUE;
-    $description = t('If you want to import the Borger.dk menu you must first activate "Import and utilize Borger.dk-menus" and save the settings');
-    drupal_set_message($description);
+    $description = 'If you want to import the Borger.dk menu you must first activate "Import and utilize Borger.dk-menus" and save the settings';
+    drupal_set_message(t($description));
   }
   $form['os2web_borger_dk_settings_6']['import_menu_and_articles_now'] = array(
     '#type' => 'submit',
     '#value' => 'Import Borger.dk-menu and articles now',
     '#submit' => array('os2web_borger_dk_import_now_form_submit'),
     '#disabled' => $disabled,
-    '#description' => $description,
+    '#description' => t($description),
   );
 
   $form['os2web_borger_dk_settings_7'] = array(
@@ -215,13 +215,13 @@ function os2web_borger_dk_settings_form($form, $form_state) {
   $form['os2web_borger_dk_settings_7']['os2web_borger_dk_microarticle_active'] = array(
     '#type' => 'checkbox',
     '#title' => t('Show and edit microarticles individually'),
-    '#description' => t('Check to enable visibility and editablity of microarticles from Borger.dk '),
+    '#description' => t('Check to enable visibility and editablity of microarticles from Borger.dk'),
     '#default_value' => variable_get('os2web_borger_dk_microarticle_active', 0),
   );
 
   $options = variable_get('os2web_borger_dk_municipality_list');
   if (isset($options)) {
-    $muni_items= $options; 
+    $muni_items= $options;
   }
   else{
     $muni_items= array();
