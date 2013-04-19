@@ -27,7 +27,7 @@ div.microArticle a {
 }
 .os2web_borger_dk_selfservi {
   clear: both;
-  padding: 10px 5px 10px 10px;
+  padding: 10px 15px;
   background-color: #D9E5C3;
   border-radius: 7px 7px 7px 7px;
 }
@@ -99,6 +99,11 @@ div.microArticle a {
   font-weight: 300;
 }
 
+.borger_dk-field_os2web-borger-dk-recommend h4 {
+  font-family: "myriad-pro",Arial,Helvetica,sans-serif;
+  font-size: 18px;
+  font-weight: 300;
+}
 .borger_dk-field_os2web-borger-dk-legislati,
 .borger_dk-field_os2web-borger-dk-recommend,
 .borger_dk-field_os2web-borger-dk-shortlist {

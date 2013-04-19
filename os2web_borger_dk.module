@@ -1096,6 +1096,7 @@ function os2web_borger_dk_node_submit(&$node, $form, &$form_state) {
 
 
 
+
 /*********************   Menu import ************/
 
 function os2web_borger_dk_import_now_form_submit($form, &$form_state) {
@@ -1381,7 +1382,14 @@ function _os2web_borger_dk_import_article_and_build_menu($aid, $pid) {
     }
   // Import the Borger.dk-article with the given ArticleID.
   $article = _os2web_borger_dk_GetArticleByID($aid, $wsdl, FALSE);
+
   if (empty($article['Exceptions']) && empty($article['error'])) {
+
+    $body = '';
+      foreach ($article['kernetekst'] as $div => $content) {
+      $body .= $content . "\n";
+    }
+
     $title = $article['title'];
     $nid = FALSE;
     $node = new stdClass();
