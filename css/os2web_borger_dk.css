@@ -35,6 +35,9 @@ div.microArticle a {
 .os2web_borger_dk_selfservi h3 {
   border-bottom: 1px solid #BBC5A8;
   color: #526A27;
+  /*font-family: "myriad-pro",Arial,Helvetica,sans-serif;*/
+  font-size: 20px;
+  font-weight: 300;
 }
 
 .os2web_borger_dk_selfservi ul li a, .os2web_borger_dk_selfservi a:link{
@@ -91,7 +94,9 @@ div.microArticle a {
 .borger_dk-field_os2web-borger-dk-recommend h3,
 .borger_dk-field_os2web-borger-dk-shortlist h3 {
   border-bottom: 1px solid #C3C3C3;
-  font-size: 16px;
+  font-family: "myriad-pro",Arial,Helvetica,sans-serif;
+  font-size: 20px;
+  font-weight: 300;
 }
 
 .borger_dk-field_os2web-borger-dk-legislati,
