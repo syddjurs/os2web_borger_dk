@@ -198,6 +198,26 @@ function os2web_borger_dk_settings_form($form, $form_state) {
                         Step2 : When Borger.dk menu items are imported, please import all Borger.dk articles.
                         Step 3 : Create Borger.dk menu structure now."),
   );
+  $menu_option = array();  
+  $existing_menu = db_query('SELECT * FROM {menu_custom}');
+  $menu_option['borgerdkmenu2'] = variable_get('os2web_borger_dk_borger_dk_menu_name', 'Borger.dk menu');
+  if ($existing_menu) {
+    foreach ($existing_menu as $menu_item) {
+      $menu_name = $menu_item->menu_name;
+      $menu_title = $menu_item->title;
+      $menu_option[$menu_name] = $menu_title;
+    }
+  }
+  $form['os2web_borger_dk_settings_6']['build_borger_menu_under_menu'] = array(
+    '#type' => 'select',
+    '#title' => t('Select Borger.dk menu Parent Item'),
+    '#options' => $menu_option,
+    '#description' => t('Select Borger.dk menu Parent Item from the list.'),
+    '#default_value' => variable_get('build_borger_menu_under_menu'),
+    '#type' => 'select',
+  );
+  //variable_set('build_borger_menu_under_menu');
+
   $disabled = FALSE;
   $description = '';
   $menus_import = variable_get('os2web_borger_dk_menus_import', 0);
@@ -206,16 +226,17 @@ function os2web_borger_dk_settings_form($form, $form_state) {
     $description = t('If you want to import the Borger.dk menu you must first activate "Import and utilize Borger.dk-menus" and save the settings');
     drupal_set_message($description);
   }
-  $form['os2web_borger_dk_settings_6']['import_menu_now'] = array(
+  $form['os2web_borger_dk_settings_6']['submit']= array(
     '#type' => 'submit',
     '#value' => 'Import Borger.dk-menu now',
     '#submit' => array('os2web_borger_dk_import_menu_now_form_submit'),
     '#disabled' => $disabled,
-    '#description' => t(' Step1 : Please import Borger.dk menu items.'),
+
+   // '#description' => t(' Step1 : Please import Borger.dk menu items.'),
   );
-    $form['os2web_borger_dk_settings_6']['import_all_articles_now'] = array(
+  $form['os2web_borger_dk_settings_6']['import_all_articles_now'] = array(
     '#type' => 'submit',
-    '#value' => 'Import Borger.dk articles now',
+    '#value' => 'Import Borger.dk articles',
     '#submit' => array('os2web_borger_dk_import_articles_now_form_submit'),
     '#disabled' => $disabled,
     '#description' => t(' Step2 : When Borger.dk menu items are imported, please import all Borger.dk articles.'),

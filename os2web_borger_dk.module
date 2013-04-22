@@ -1093,12 +1093,6 @@ function os2web_borger_dk_node_submit(&$node, $form, &$form_state) {
 }
 
 
-
-
-
-
-/*********************   Menu import ************/
-
 /*********************   Menu import ************/
 
 function os2web_borger_dk_import_menu_now_form_submit($form, &$form_state) {
@@ -1120,8 +1114,11 @@ function os2web_borger_dk_import_menu_now_form_submit($form, &$form_state) {
       $parent_array [$item_siteID]= $item['SiteTitle'];
     }
     $total = count($menu_items_availlable);
+   // $menu_name = $form['build_borger_menu_under_menu']['#value'];
+    $menu_name = variable_get('build_borger_menu_under_menu');
+    //error_log(' menu name  =>'.print_r($menu_name,TRUE), 3, '/home/yani/workspace/drupal/menu_structure.log');
 
-    os2web_borger_dk_create_custom_menu($menu_items_availlable, $total, $parent_array);
+    os2web_borger_dk_create_custom_menu($menu_items_availlable, $total, $parent_array, $menu_name);
   }
 }
 
@@ -1129,20 +1126,33 @@ function os2web_borger_dk_import_menu_now_form_submit($form, &$form_state) {
  * Function os2web_borger_dk_create_custom_menu()
  * Create a custom menu. 
  */
-function os2web_borger_dk_create_custom_menu($menu_items_availlable, $total, $parent_array) {
+function os2web_borger_dk_create_custom_menu($menu_items_availlable, $total, $parent_array, $menu_name) {
   $borger_dk_menu = variable_get('os2web_borger_dk_borger_dk_menu_name', 'Borger.dk menu');
-  $existing_menu = db_query('SELECT * FROM {menu_custom} WHERE menu_name = :menu_name',
-                       array('menu_name' => $borger_dk_menu))->fetchAssoc();
-  if ($existing_menu) {
-    menu_delete('borgerdkmenu2');
+  if ($menu_name == 'borgerdkmenu2' && $borger_dk_menu == 'Borger.dk menu') {
+    $existing_menu = db_query('SELECT * FROM {menu_custom} WHERE menu_name = :menu_name',
+                       array('menu_name' => $menu_name))->fetchAssoc();
+    if (!$existing_menu) {
+      $menu = array();
+      $menu['menu_name'] = 'borgerdkmenu2';
+      $menu['title'] = t($borger_dk_menu);
+      $menu['description'] = "The <em>Presentation tabs</em> menu contains links to presentation detail";
+      menu_save($menu);
+    }
   }
-  else {
-    $menu = array();
-    $menu['menu_name'] = 'borgerdkmenu2';
-    $menu['title'] = t($borger_dk_menu);
-    $menu['description'] = "The <em>Presentation tabs</em> menu contains links to presentation detail";
-    menu_save($menu);
-  }
+ /* elseif ($menu_name != 'borgerdkmenu2') {
+    $existing_menu = db_query('SELECT * FROM {menu_links} WHERE link_title= :link_title AND menu_name = :menu_name',
+                              array('link_title' => $borger_dk_menu, 'menu_name' => $menu_name))->fetchAssoc();
+    if (!$existing_menu) {
+      $menu_item = array(
+        'menu_name' => $menu_name, 
+        'link_path' => 'node',
+        'link_title' => $borger_dk_menu,
+        'module' => 'os2web_borger_dk',
+        'plid' => 0,
+    );
+    menu_link_save($menu_item);
+    }
+  }*/
 
   $operations[] = array();
   // Then import the menu from Borger.dk and tag all imported articles.
@@ -1153,7 +1163,7 @@ function os2web_borger_dk_create_custom_menu($menu_items_availlable, $total, $pa
   $groups = array_chunk($menu_items_availlable, 10);
   foreach ($groups as $gid => $group) {
     // Set the batch operation to import 10 menu items each time.
-    $operations[] = array('_os2web_borger_dk_import_menu_items', array($group, $total, $parent_array));
+    $operations[] = array('_os2web_borger_dk_import_menu_items', array($group, $total, $parent_array,$menu_name));
   }
 
   //foreach ($menu_items_availlable as $item) {
@@ -1176,7 +1186,7 @@ function os2web_borger_dk_create_custom_menu($menu_items_availlable, $total, $pa
 /**
  *  Function _os2web_borger_dk_import_menu_items().
  */
-function _os2web_borger_dk_import_menu_items($group, $total, $parent_array, &$context) {
+function _os2web_borger_dk_import_menu_items($group, $total, $parent_array,$menu_name, &$context) {
   if (empty($context['sandbox'])) {
     $context['sandbox'] = array();
     $context['sandbox']['progress'] = 0;
@@ -1184,113 +1194,47 @@ function _os2web_borger_dk_import_menu_items($group, $total, $parent_array, &$co
     $context['sandbox']['max'] = $total ;
   }
   foreach ($group as $item) {
-  $item_siteID = $item['SiteID'];
-  $item_pID = $item['ParentID'];
-  $link_path = 'node';
-  $menu_item = array();
-  if (empty($item['ParentID'])) {
-    $menu_item = array(
-      'menu_name' => 'borgerdkmenu2', 
-      'link_path' => $link_path,
-      'link_title' => $item['SiteTitle'],
-      'module' => 'os2web_borger_dk',
-      'plid' => $item_pID,
-    );
-    menu_link_save($menu_item);
-
-   /* $pid = db_query('SELECT * FROM {menu_links} WHERE link_title= :link_title AND menu_name = :menu_name',
-                              array('link_title' => $item['SiteTitle'], 'menu_name' => 'borgerdkmenu2'))->fetchAssoc();
-    if ($pid) {
-      $wsdl = variable_get('os2web_borger_dk_webservice', 'https://www.borger.dk/_vti_bin/borger/ArticleExport.svc?wsdl');
-      $article_ids = _os2web_borger_dk_GetArticleIDsBySiteID($item_siteID, $wsdl);
-      if (!empty($article_ids)) {
-        foreach ($article_ids as $id => $value) {
-          _os2web_borger_dk_import_article_and_build_menu($value, $pid['mlid']);
-        }
-      } 
-    }*/
-    // Update our progress information.
-    $context['sandbox']['progress']++;
-  }
-  else {
-   /* TODO : check existed menu items!!
-    $existing_item = db_query('SELECT * FROM {menu_links} WHERE link_title= :link_title AND menu_name = :menu_name',
-                              array('link_title' => $item['SiteTitle'], 'menu_name' => 'borgerdkmenu2'))->fetchAssoc();
-
-    // If return a list of result.  
-    if ($existing_item) {
-      foreach ($existing_item as $existed) {
-        $plid = $existed['plid'];
-        $result = db_query('SELECT * FROM {menu_links} WHERE mlid= :plid AND menu_name = :menu_name',
-                              array('plid' => $plid, 'menu_name' => 'borgerdkmenu2'))->fetchAssoc();
-        // Check each item's parent is the same.
-        // If item's and parent's title are the same, so it is the same item.
-        if ($result['link_title'] != $parent_array[$item_pID]) {
-          // Check if item's parent is existed.
-          $existing_parent = db_query('SELECT * FROM {menu_links} WHERE link_title= :link_title AND menu_name = :menu_name',
-                              array('link_title' => $parent_array[$item_pID], 'menu_name' => 'borgerdkmenu2'))->fetchAssoc();
-          error_log(' existing =>'.print_r($existing_parent,TRUE), 3, '/home/yani/workspace/drupal/menu_structure.log');
-          if ($existing_parent) {
-            $menu_item = array(
-              'menu_name' => 'borgerdkmenu2', 
-              'link_path' => $link_path,
-              'link_title' => $item['SiteTitle'],
-              'module' => 'os2web_borger_dk',
-              'plid' => $existing_parent['mlid'],
-            );
-            menu_link_save($menu_item);
-          }
-          // If parent is NOT existed.
-          else {
-            $secondary_menu[] = $item;
-          }
-        }
+    $item_siteID = $item['SiteID'];
+    $item_pID = $item['ParentID'];
+    $link_path = 'node';
+    $menu_item = array();
+    // The first menu item from Borger.dk does NOT contain a parent ID.
+    //'Emner', it is the root of Borger.dk menu tree structure.
+    if (empty($item['ParentID'])) {
+      $mlid = db_query('SELECT * FROM {menu_links} WHERE link_title= :link_title AND menu_name = :menu_name',
+                              array('link_title' => $item['SiteTitle'], 'menu_name' => $menu_name))->fetchAssoc();
+      // If the menu link is NOT existed.
+      if (!$mlid) {
+        $menu_item = array(
+        'menu_name' => $menu_name, 
+        'link_path' => $link_path,
+        'link_title' => $item['SiteTitle'],
+        'module' => 'os2web_borger_dk',
+        'plid' => $item_pID,
+        );
+        menu_link_save($menu_item);
       }
-    }*/
-    // If item is NOT existed. Check first if its parent is existed.
-   // else {
+      // Update our progress information.
+      $context['sandbox']['progress']++;
+    }
+    else {
+      $mlid = db_query('SELECT * FROM {menu_links} WHERE link_title= :link_title AND menu_name = :menu_name',
+                              array('link_title' => $item['SiteTitle'], 'menu_name' => $menu_name))->fetchAssoc();
+      // If the menu link is NOT existed.
       $existing_parent = db_query('SELECT * FROM {menu_links} WHERE link_title= :link_title AND menu_name = :menu_name',
-                                 array('link_title' => $parent_array[$item_pID], 'menu_name' => 'borgerdkmenu2'))->fetchAssoc();
+                                 array('link_title' => $parent_array[$item_pID], 'menu_name' => $menu_name))->fetchAssoc();
       //error_log(' existing =>'.print_r($existing_parent,TRUE), 3, '/home/yani/workspace/drupal/menu_structure.log');
-      if ($existing_parent) {
+      if ($existing_parent && !$mlid) {
         // Create a menu page for the Menu item (path)
         $nid = _os2web_borger_dk_create_menu_page($item);
         $menu_item = array(
-          'menu_name' => 'borgerdkmenu2', 
+          'menu_name' => $menu_name, 
           'link_path' => "node/" . $nid,
           'link_title' => $item['SiteTitle'],
           'module' => 'os2web_borger_dk',
           'plid' => $existing_parent['mlid'],
         );
         menu_link_save($menu_item);
-
-       /* $pid = db_query('SELECT * FROM {menu_links} WHERE link_title= :link_title AND menu_name = :menu_name',
-                              array('link_title' => $item['SiteTitle'], 'menu_name' => 'borgerdkmenu2'))->fetchAssoc();
-        if ($pid) {
-          $wsdl = variable_get('os2web_borger_dk_webservice', 'https://www.borger.dk/_vti_bin/borger/ArticleExport.svc?wsdl');
-          $article_ids = _os2web_borger_dk_GetArticleIDsBySiteID($item_siteID, $wsdl);
-          if (!empty($article_ids)) {
-            foreach ($article_ids as $id => $value) {
-              _os2web_borger_dk_import_article_and_build_menu($value, $pid['mlid']);
-            }
-          }
-        }*/
-        // TODO:  ADD menu/article links to the menu page. * But the menu item (has children) will be created later, therefor they are NOT showing..
-        /*$body_content = '';
-        $children = db_query('SELECT * FROM {menu_links} WHERE plid= :plid AND menu_name = :menu_name',
-                              array('plid' => $pid['mlid'], 'menu_name' => 'borgerdkmenu2'));
-        if ($children) {
-         foreach ($children as $child) {
-            $body_content = $body_content . "<p><a href= '". $child->link_path ."'> " . $child->link_title ." </a>" . "\n";
-          //  error_log(' Children_item =>  '.print_r($child, TRUE), 3, '/home/yani/workspace/drupal/menu_structure.log');
-          }
-
-          $node = node_load($nid);
-          $node->body['und']['0']['value'] = $body_content;
-          $node->body['und']['0']['safe_value'] = $body_content;
-          $node->body['und'][0]['format'] = 'full_html';
-          node_save($node);
-        }*/
       }
       // Update our progress information.
       $context['sandbox']['progress']++;
@@ -1587,13 +1531,10 @@ function os2web_borger_dk_batch_article_import_finished() {
     drupal_set_message(t('An error occurred while processing @operation with arguments : @args', array(
       '@operation' => $error_operation[0], '@args' => print_r($error_operation[0], TRUE))));
   }
-
-  //_os2web_borger_dk_create_menu_links();
-  drupal_goto('admin/config/os2web_borger_dk');
+  drupal_goto('admin/config/os2web_borger_dk/settings');
 }
 function os2web_borger_dk_create_borger_dk_menu_now_form_submit($form, &$form_state) {
   if ($form_state['submitted'] == 1) {
-      error_log(' message =>'.print_r("......................",TRUE), 3, '/home/yani/workspace/drupal/menu_structure.log');
 
     // Next we get a list of all menu-items from the Borger.dk-webservice.
     $wsdl = variable_get('os2web_borger_dk_webservice', 'https://www.borger.dk/_vti_bin/borger/ArticleExport.svc?wsdl');
@@ -1606,14 +1547,14 @@ function os2web_borger_dk_create_borger_dk_menu_now_form_submit($form, &$form_st
     }
 
     $total = count($menu_items_availlable);
-
+    $menu_name = variable_get('build_borger_menu_under_menu');
     $operations[] = array();
     // Then import the menu from Borger.dk and tag all imported articles.
     $operations[] = array('_os2web_borger_dk_create_menustructure_cronbatch_wrapper', array($total));
 
     //error_log('os2web_borger_dk_import_now_form_submit created this batch-setup: '. print_r($batch, TRUE) ."\n\n", 3, '/srv/www/log/borger_dk_batch.log');
     foreach ($menu_items_availlable as $item) {
-      $operations[] = array('_os2web_borger_dk_create_borger_dk_meun_structure', array($item, $total));
+      $operations[] = array('_os2web_borger_dk_create_borger_dk_meun_structure', array($item, $total, $menu_name));
     }
   /*  $groups = array_chunk($menu_items_availlable, 10);
     foreach ($groups as $gid => $group) {
@@ -1633,145 +1574,152 @@ function os2web_borger_dk_create_borger_dk_menu_now_form_submit($form, &$form_st
   }
 }
 
-function _os2web_borger_dk_create_borger_dk_meun_structure($item, $total, &$context) {
+function _os2web_borger_dk_create_borger_dk_meun_structure($item, $total, $menu_name, &$context) {
   if (empty($context['sandbox'])) {
     $context['sandbox'] = array();
     $context['sandbox']['progress'] = 0;
-    //$context['sandbox']['current_node'] = 0;
     $context['sandbox']['max'] = $total ;
   }
-  //foreach ($menu_items_availlable as $item) {
 
-    $pid = db_query('SELECT * FROM {menu_links} WHERE link_title= :link_title AND menu_name = :menu_name', array('link_title' => $item['SiteTitle'], 'menu_name' => 'borgerdkmenu2'))->fetchAssoc();
-    if ($pid) {
-      error_log(' menu *** =>'.print_r($item,TRUE), 3, '/home/yani/workspace/drupal/menu_structure.log');
+  $pid = db_query('SELECT * FROM {menu_links} WHERE link_title= :link_title AND menu_name = :menu_name',
+                  array('link_title' => $item['SiteTitle'], 'menu_name' => $menu_name))->fetchAssoc();
+  if ($pid) {
 
-      $wsdl = variable_get('os2web_borger_dk_webservice', 'https://www.borger.dk/_vti_bin/borger/ArticleExport.svc?wsdl');
-      $article_ids = _os2web_borger_dk_GetArticleIDsBySiteID($item['SiteID'], $wsdl);
-      if (!empty($article_ids)) {
-        foreach ($article_ids as $id => $value) {
-          // TODO: check if the links is existed.!!!!
-          // Check if article is existed.
-          $result = db_query("SELECT `ArticleID`, `ArticleStatus`, `ArticleTitle` FROM {os2web_borger_dk_article_titles} WHERE `ArticleID` = " . $value);
-          if ($result) {
-            foreach ($result as $row) {
-              if ($row->ArticleStatus > 0) {
-                $menu_item = array(
-                    'menu_name' => 'borgerdkmenu2', 
-                    'link_path' => "node/" . $row->ArticleStatus,
-                    'link_title' => $row->ArticleTitle,
+    $wsdl = variable_get('os2web_borger_dk_webservice', 'https://www.borger.dk/_vti_bin/borger/ArticleExport.svc?wsdl');
+    $article_ids = _os2web_borger_dk_GetArticleIDsBySiteID($item['SiteID'], $wsdl);
+    if (!empty($article_ids)) {
+      foreach ($article_ids as $id => $value) {
+        // TODO: check if the links is existed.!!!!
+        // Check if article is existed.
+        $result = db_query("SELECT `ArticleID`, `ArticleStatus`, `ArticleTitle` FROM {os2web_borger_dk_article_titles}
+                           WHERE `ArticleID` = " . $value);
+        if ($result) {
+          foreach ($result as $row) {
+            $article_title = $row->ArticleTitle;
+            $mlid = db_query('SELECT * FROM {menu_links} WHERE link_title= :link_title AND menu_name = :menu_name AND plid = :plid' ,
+                         array('link_title' => $article_title, 'menu_name' => $menu_name, 'plid' => $pid['mlid']))->fetchAssoc();
+            if ($mlid) {
+              return;
+            }
+            if ($row->ArticleStatus > 0) {
+              $menu_item = array(
+                'menu_name' => $menu_name, 
+                'link_path' => "node/" . $row->ArticleStatus,
+                'link_title' => $row->ArticleTitle,
+                'module' => 'os2web_borger_dk',
+                'plid' => isset($pid['mlid']) ? $pid['mlid'] : 0,
+              );
+              menu_link_save($menu_item);
+            }
+            // If the article is NOT imported yet, so import it.
+            else {
+              $article = _os2web_borger_dk_GetArticleByID($value, $wsdl, FALSE);
+
+              if (empty($article['Exceptions']) && empty($article['error'])) {
+                $body = '';
+                foreach ($article['kernetekst'] as $div => $content) {
+                  $body .= $content . "\n";
+                }
+
+                $title = $article['title'];
+                $nid = FALSE;
+                $node = new stdClass();
+                $node->created = !empty($node->date) ? strtotime($node->date) : REQUEST_TIME;
+                $node->validated = TRUE;
+                // Insert default value of a new node.
+                $node->type = 'os2web_borger_dk_article';
+                $node->title = (!empty($article['title'])) ? $article['title'] : '';
+                $node->body['und']['0']['value'] = !empty($body) ? $body : '';
+                $node->field_os2web_borger_dk_borgerurl['und'][0]['value'] = (!empty($article['external_url'])) ? $article['external_url'] : '';
+                $node->field_os2web_borger_dk_header['und'][0]['value'] = (!empty($article['header'])) ? $article['header'] : '';
+                $node->field_os2web_borger_dk_selfservi['und'][0]['value'] = (!empty($article['selvbetjeningslinks'])) ? $article['selvbetjeningslinks'] : '';
+                $node->field_os2web_borger_dk_byline['und'][0]['value'] = (!empty($article['byline'])) ? $article['byline'] : '';
+                $node->field_os2web_borger_dk_legislati['und'][0]['value'] = (!empty($article['lovgivning'])) ? $article['lovgivning'] : '';
+                $node->field_os2web_borger_dk_shortlist['und'][0]['value'] = (!empty($article['huskeliste'])) ? $article['huskeliste'] : '';
+                $node->field_os2web_borger_dk_recommend['und'][0]['value'] = (!empty($article['anbefaler'])) ? $article['anbefaler'] : '';
+
+                $node->body['und']['0']['safe_value'] = $body;
+                $node->field_os2web_borger_dk_borgerurl['und'][0]['safe_value'] = (!empty($article['external_url'])) ? $article['external_url'] : '';
+                $node->field_os2web_borger_dk_header['und'][0]['safe_value'] = (!empty($article['header'])) ? $article['header'] : '';
+                $node->field_os2web_borger_dk_selfservi['und'][0]['safe_value'] = (!empty($article['selvbetjeningslinks'])) ? $article['selvbetjeningslinks'] : '';
+                $node->field_os2web_borger_dk_byline['und'][0]['safe_value'] = (!empty($article['byline'])) ? $article['byline'] : '';
+                $node->field_os2web_borger_dk_legislati['und'][0]['safe_value'] = (!empty($article['lovgivning'])) ? $article['lovgivning'] : '';
+                $node->field_os2web_borger_dk_shortlist['und'][0]['safe_value'] = (!empty($article['huskeliste'])) ? $article['huskeliste'] : '';
+                $node->field_os2web_borger_dk_recommend['und'][0]['safe_value'] = (!empty($article['anbefaler'])) ? $article['anbefaler'] : '';
+
+                $node->body['und'][0]['format'] = 'full_html';
+                $node->field_os2web_borger_dk_header['und'][0]['format'] = 'full_html';
+                $node->field_os2web_borger_dk_selfservi['und'][0]['format'] = 'full_html';
+                $node->field_os2web_borger_dk_byline['und'][0]['format'] = 'plaintext';
+                $node->field_os2web_borger_dk_legislati['und'][0]['format'] = 'full_html';
+                $node->field_os2web_borger_dk_shortlist['und'][0]['format'] = 'full_html';
+                $node->field_os2web_borger_dk_recommend['und'][0]['format'] = 'full_html';
+
+                $field_settings = $form_state['values']['os2web_borger_dk_field_settings'];
+                // Check admin field settings : are there fields set as hidden by admin.
+                $admin_display_fields = variable_get('os2web_borger_dk_display');
+                foreach ($admin_display_fields as $type => $items) {
+                  if (!$admin_display_fields[$type]) {
+                    $field_settings[$type] = $type;
+                  }
+                }
+                // TODO: Perform a logical-test (on paper) to
+                // see if the external_status is correct.
+                $external_status = (empty($article['Exceptions']) && empty($article['error'])) ? 1 : 0;
+                $external_status = (!empty($article['error']) && $article['error_type'] == 'not_found') ? -1 : $external_status;
+                $node->os2web_borger_dk_article = array(
+                  'external_id' => $article['external_id'],
+                  'external_url' => $article['external_url'],
+                  'external_status' => $external_status,
+                  'field_settings' => $field_settings,
+                  'published_date' => strtotime($article['published_date']),
+                  'last_updated' => strtotime($article['last_updated']),
+                );
+
+                if (!empty($article['Exceptions']) || !empty($article['error'])) {
+                  drupal_set_message(t('An exception was thrown by the Borger.dk webservice for the specified URL.'), 'error');
+                  drupal_set_message(t('You can fetch this article when the webservice is responsive again.'), 'error');
+                }
+                else {
+                  $node = node_submit($node);
+                  // We need to store the field values and article-settings.
+                  node_save($node);
+                  // Then we need to update the ArticleStatus in the Title-list.
+                  if ($node->nid) {
+                    db_update('os2web_borger_dk_article_titles')
+                      ->fields(array('ArticleStatus' => $node->nid))
+                      ->condition('ArticleID', $article['external_id'], '=')
+                      ->execute();
+                  }
+                  $menu_item = array(
+                    'menu_name' => $menu_name, 
+                    'link_path' => "node/" . $node->nid,
+                    'link_title' => $node->title,
                     'module' => 'os2web_borger_dk',
                     'plid' => isset($pid['mlid']) ? $pid['mlid'] : 0,
-                );
-                menu_link_save($menu_item);
-              }
-            }
-          }
-          // If article is NOT existed, then import by articleID.
-          else {
-            // Import the Borger.dk-article with the given ArticleID.
-            $article = _os2web_borger_dk_GetArticleByID($value, $wsdl, FALSE);
-
-            if (empty($article['Exceptions']) && empty($article['error'])) {
-              $body = '';
-              foreach ($article['kernetekst'] as $div => $content) {
-                $body .= $content . "\n";
-              }
-
-              $title = $article['title'];
-              $nid = FALSE;
-              $node = new stdClass();
-              $node->created = !empty($node->date) ? strtotime($node->date) : REQUEST_TIME;
-              $node->validated = TRUE;
-
-              // Insert default value of a new node.
-              $node->type = 'os2web_borger_dk_article';
-              $node->title = (!empty($article['title'])) ? $article['title'] : '';
-              $node->body['und']['0']['value'] = !empty($body) ? $body : '';
-              $node->field_os2web_borger_dk_borgerurl['und'][0]['value'] = (!empty($article['external_url'])) ? $article['external_url'] : '';
-              $node->field_os2web_borger_dk_header['und'][0]['value'] = (!empty($article['header'])) ? $article['header'] : '';
-              $node->field_os2web_borger_dk_selfservi['und'][0]['value'] = (!empty($article['selvbetjeningslinks'])) ? $article['selvbetjeningslinks'] : '';
-              $node->field_os2web_borger_dk_byline['und'][0]['value'] = (!empty($article['byline'])) ? $article['byline'] : '';
-              $node->field_os2web_borger_dk_legislati['und'][0]['value'] = (!empty($article['lovgivning'])) ? $article['lovgivning'] : '';
-              $node->field_os2web_borger_dk_shortlist['und'][0]['value'] = (!empty($article['huskeliste'])) ? $article['huskeliste'] : '';
-              $node->field_os2web_borger_dk_recommend['und'][0]['value'] = (!empty($article['anbefaler'])) ? $article['anbefaler'] : '';
-
-              $node->body['und']['0']['safe_value'] = $body;
-              $node->field_os2web_borger_dk_borgerurl['und'][0]['safe_value'] = (!empty($article['external_url'])) ? $article['external_url'] : '';
-              $node->field_os2web_borger_dk_header['und'][0]['safe_value'] = (!empty($article['header'])) ? $article['header'] : '';
-              $node->field_os2web_borger_dk_selfservi['und'][0]['safe_value'] = (!empty($article['selvbetjeningslinks'])) ? $article['selvbetjeningslinks'] : '';
-              $node->field_os2web_borger_dk_byline['und'][0]['safe_value'] = (!empty($article['byline'])) ? $article['byline'] : '';
-              $node->field_os2web_borger_dk_legislati['und'][0]['safe_value'] = (!empty($article['lovgivning'])) ? $article['lovgivning'] : '';
-              $node->field_os2web_borger_dk_shortlist['und'][0]['safe_value'] = (!empty($article['huskeliste'])) ? $article['huskeliste'] : '';
-              $node->field_os2web_borger_dk_recommend['und'][0]['safe_value'] = (!empty($article['anbefaler'])) ? $article['anbefaler'] : '';
-
-              $node->body['und'][0]['format'] = 'full_html';
-              $node->field_os2web_borger_dk_header['und'][0]['format'] = 'full_html';
-              $node->field_os2web_borger_dk_selfservi['und'][0]['format'] = 'full_html';
-              $node->field_os2web_borger_dk_byline['und'][0]['format'] = 'plaintext';
-              $node->field_os2web_borger_dk_legislati['und'][0]['format'] = 'full_html';
-              $node->field_os2web_borger_dk_shortlist['und'][0]['format'] = 'full_html';
-              $node->field_os2web_borger_dk_recommend['und'][0]['format'] = 'full_html';
-
-              $field_settings = $form_state['values']['os2web_borger_dk_field_settings'];
-              // Check admin field settings : are there fields set as hidden by admin.
-              $admin_display_fields = variable_get('os2web_borger_dk_display');
-              foreach ($admin_display_fields as $type => $items) {
-                if (!$admin_display_fields[$type]) {
-                  $field_settings[$type] = $type;
-                }
-              }
-              // TODO: Perform a logical-test (on paper) to
-              // see if the external_status is correct.
-              $external_status = (empty($article['Exceptions']) && empty($article['error'])) ? 1 : 0;
-              $external_status = (!empty($article['error']) && $article['error_type'] == 'not_found') ? -1 : $external_status;
-              $node->os2web_borger_dk_article = array(
-                'external_id' => $article['external_id'],
-                'external_url' => $article['external_url'],
-                'external_status' => $external_status,
-                'field_settings' => $field_settings,
-                'published_date' => strtotime($article['published_date']),
-                'last_updated' => strtotime($article['last_updated']),
-              );
-
-              if (!empty($article['Exceptions']) || !empty($article['error'])) {
-                drupal_set_message(t('An exception was thrown by the Borger.dk webservice for the specified URL.'), 'error');
-                drupal_set_message(t('You can fetch this article when the webservice is responsive again.'), 'error');
-              }
-              else {
-                $node = node_submit($node);
-                // We need to store the field values and article-settings.
-                node_save($node);
-                // Then we need to update the ArticleStatus in the Title-list.
-                if ($node->nid) {
-                  db_update('os2web_borger_dk_article_titles')
-                    ->fields(array('ArticleStatus' => $node->nid))
-                    ->condition('ArticleID', $article['external_id'], '=')
-                    ->execute();
-                }
-                $menu_item = array(
-                  'menu_name' => 'borgerdkmenu2', 
-                  'link_path' => "node/" . $node->nid,
-                  'link_title' => $node->title,
-                  'module' => 'os2web_borger_dk',
-                  'plid' => isset($pid['mlid']) ? $pid['mlid'] : 0,
                   );
                   menu_link_save($menu_item);
+                }
               }
             }
           }
-          // Update our progress information.
-          $context['sandbox']['progress']++;
         }
+        // If article is NOT existed, then import by articleID.
+        else {
+          _os2web_borger_dk_import_supplement_article($value);
+        }
+        // Update our progress information.
+        $context['sandbox']['progress']++;
       }
-      // TODO: list links for menu page.here!
+    }
+    // TODO: list links for menu page.here!
     $node_id = $pid['link_path'];
     $node_id = substr($node_id, 5, strlen($node_id)-1);
-    error_log(' menu nid*** =>'.print_r($pid['link_path'],TRUE), 3, '/home/yani/workspace/drupal/menu_structure.log');
+    //error_log(' menu nid*** =>'.print_r($pid['link_path'],TRUE), 3, '/home/yani/workspace/drupal/menu_structure.log');
 
     $body_content = '';
     $children = db_query('SELECT * FROM {menu_links} WHERE plid= :plid AND menu_name = :menu_name',
-                              array('plid' => $pid['mlid'], 'menu_name' => 'borgerdkmenu2'));
+                              array('plid' => $pid['mlid'], 'menu_name' => $menu_name));
     if ($children) {
       foreach ($children as $child) {
         $body_content = $body_content . "<p><a href= '". $child->link_path ."'> " . $child->link_title ." </a>" . "\n";
@@ -1790,6 +1738,110 @@ function _os2web_borger_dk_create_borger_dk_meun_structure($item, $total, &$cont
   //}
   $context['finished'] = 1;
 }
+
+function _os2web_borger_dk_import_supplement_article($value) {
+  $wsdl = variable_get('os2web_borger_dk_webservice', 'https://www.borger.dk/_vti_bin/borger/ArticleExport.svc?wsdl');
+  // Import the Borger.dk-article with the given ArticleID.
+  $article = _os2web_borger_dk_GetArticleByID($value, $wsdl, FALSE);
+
+  if (empty($article['Exceptions']) && empty($article['error'])) {
+    $body = '';
+    foreach ($article['kernetekst'] as $div => $content) {
+      $body .= $content . "\n";
+    }
+
+    $title = $article['title'];
+    $nid = FALSE;
+    $node = new stdClass();
+    $node->created = !empty($node->date) ? strtotime($node->date) : REQUEST_TIME;
+    $node->validated = TRUE;
+    // Insert default value of a new node.
+    $node->type = 'os2web_borger_dk_article';
+    $node->title = (!empty($article['title'])) ? $article['title'] : '';
+    $node->body['und']['0']['value'] = !empty($body) ? $body : '';
+    $node->field_os2web_borger_dk_borgerurl['und'][0]['value'] = (!empty($article['external_url'])) ? $article['external_url'] : '';
+    $node->field_os2web_borger_dk_header['und'][0]['value'] = (!empty($article['header'])) ? $article['header'] : '';
+    $node->field_os2web_borger_dk_selfservi['und'][0]['value'] = (!empty($article['selvbetjeningslinks'])) ? $article['selvbetjeningslinks'] : '';
+    $node->field_os2web_borger_dk_byline['und'][0]['value'] = (!empty($article['byline'])) ? $article['byline'] : '';
+    $node->field_os2web_borger_dk_legislati['und'][0]['value'] = (!empty($article['lovgivning'])) ? $article['lovgivning'] : '';
+    $node->field_os2web_borger_dk_shortlist['und'][0]['value'] = (!empty($article['huskeliste'])) ? $article['huskeliste'] : '';
+    $node->field_os2web_borger_dk_recommend['und'][0]['value'] = (!empty($article['anbefaler'])) ? $article['anbefaler'] : '';
+
+    $node->body['und']['0']['safe_value'] = $body;
+    $node->field_os2web_borger_dk_borgerurl['und'][0]['safe_value'] = (!empty($article['external_url'])) ? $article['external_url'] : '';
+    $node->field_os2web_borger_dk_header['und'][0]['safe_value'] = (!empty($article['header'])) ? $article['header'] : '';
+    $node->field_os2web_borger_dk_selfservi['und'][0]['safe_value'] = (!empty($article['selvbetjeningslinks'])) ? $article['selvbetjeningslinks'] : '';
+    $node->field_os2web_borger_dk_byline['und'][0]['safe_value'] = (!empty($article['byline'])) ? $article['byline'] : '';
+    $node->field_os2web_borger_dk_legislati['und'][0]['safe_value'] = (!empty($article['lovgivning'])) ? $article['lovgivning'] : '';
+    $node->field_os2web_borger_dk_shortlist['und'][0]['safe_value'] = (!empty($article['huskeliste'])) ? $article['huskeliste'] : '';
+    $node->field_os2web_borger_dk_recommend['und'][0]['safe_value'] = (!empty($article['anbefaler'])) ? $article['anbefaler'] : '';
+
+    $node->body['und'][0]['format'] = 'full_html';
+    $node->field_os2web_borger_dk_header['und'][0]['format'] = 'full_html';
+    $node->field_os2web_borger_dk_selfservi['und'][0]['format'] = 'full_html';
+    $node->field_os2web_borger_dk_byline['und'][0]['format'] = 'plaintext';
+    $node->field_os2web_borger_dk_legislati['und'][0]['format'] = 'full_html';
+    $node->field_os2web_borger_dk_shortlist['und'][0]['format'] = 'full_html';
+    $node->field_os2web_borger_dk_recommend['und'][0]['format'] = 'full_html';
+
+    $field_settings = $form_state['values']['os2web_borger_dk_field_settings'];
+    // Check admin field settings : are there fields set as hidden by admin.
+    $admin_display_fields = variable_get('os2web_borger_dk_display');
+    foreach ($admin_display_fields as $type => $items) {
+      if (!$admin_display_fields[$type]) {
+        $field_settings[$type] = $type;
+      }
+    }
+    // TODO: Perform a logical-test (on paper) to
+    // see if the external_status is correct.
+    $external_status = (empty($article['Exceptions']) && empty($article['error'])) ? 1 : 0;
+    $external_status = (!empty($article['error']) && $article['error_type'] == 'not_found') ? -1 : $external_status;
+    $node->os2web_borger_dk_article = array(
+      'external_id' => $article['external_id'],
+      'external_url' => $article['external_url'],
+      'external_status' => $external_status,
+      'field_settings' => $field_settings,
+      'published_date' => strtotime($article['published_date']),
+      'last_updated' => strtotime($article['last_updated']),
+    );
+
+    if (!empty($article['Exceptions']) || !empty($article['error'])) {
+      drupal_set_message(t('An exception was thrown by the Borger.dk webservice for the specified URL.'), 'error');
+      drupal_set_message(t('You can fetch this article when the webservice is responsive again.'), 'error');
+    }
+    else {
+      $node = node_submit($node);
+      // We need to store the field values and article-settings.
+      node_save($node);
+      // Then we need to update the ArticleStatus in the Title-list.
+      if ($node->nid) {
+        db_insert('os2web_borger_dk_article_titles')
+          ->fields(array('ArticleStatus' => $node->nid))
+          ->condition('ArticleID', $article['external_id'], '=')
+          ->execute();
+        db_insert('os2web_borger_dk_article_titles')
+          ->fields(array(
+            'ArticleID' => $article['external_id'],
+            'ArticleTitle' => $article['title'],
+            'ArticleUrl' => $article['external_url'],
+            'LastUpdated' => strtotime($article['last_updated']),
+            'PublishingDate' => strtotime($article['published_date']),
+            'FORMFields' => $article['FORMFields'],
+          ))
+          ->execute();
+      }
+      $menu_item = array(
+        'menu_name' => $menu_name, 
+        'link_path' => "node/" . $node->nid,
+        'link_title' => $node->title,
+        'module' => 'os2web_borger_dk',
+        'plid' => isset($pid['mlid']) ? $pid['mlid'] : 0,
+      );
+      menu_link_save($menu_item);
+    }
+  }
+}
+
 
 function _os2web_borger_dk_create_menustructure_cronbatch_wrapper($max_count, &$context) {
   $context['sandbox']['progress']++;
@@ -1814,9 +1866,6 @@ function os2web_borger_dk_batch_menustructure_create_finished($success, $results
   // Finished.
   drupal_goto('admin/config/os2web_borger_dk');
 }
-/***************** End of menu import *****************************************/
-
-
 /***************** End of menu import *****************************************/
 
 /**
