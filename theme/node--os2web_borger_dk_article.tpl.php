@@ -88,7 +88,7 @@
   <?php print render($title_suffix); ?>
 
 
-  <div class="content clearfix"<?php print $content_attributes; ?>>
+  <div id='region-content' class="content"<?php print $content_attributes; ?>>
 
   <?php
   if ($node->type == 'os2web_borger_dk_article') {
