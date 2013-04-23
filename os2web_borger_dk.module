@@ -1325,6 +1325,7 @@ function os2web_borger_dk_batch_menu_import_finished($success, $results, $operat
   if ($success) {
     //drupal_set_message(t('@count results processed.', array('@count' => count($results))));
     drupal_set_message(t('The Borger.dk menu items are imported.'));
+    drupal_set_message(t('You can now import all articles from Borger.dk'));
   }
   else {
     $error_operation = reset($operations);
@@ -1337,8 +1338,8 @@ function os2web_borger_dk_batch_menu_import_finished($success, $results, $operat
 }
 
 function os2web_borger_dk_import_articles_now_form_submit($form, &$form_state) {
-  if (($form_state['submitted'] == 1) && ($form_state['input']['op'] == 'Import Borger.dk articles now')) {
-
+  //if (($form_state['submitted'] == 1) && ($form_state['input']['op'] == 'Import Borger.dk articles now')) {
+  if ($form_state['submitted'] == 1) {
   // First we find the list of availlable articles at Borger.dk.
   $operations = array();
   $wsdl = variable_get('os2web_borger_dk_webservice', 'https://www.borger.dk/_vti_bin/borger/ArticleExport.svc?wsdl');
@@ -1383,7 +1384,7 @@ function os2web_borger_dk_import_articles_now_form_submit($form, &$form_state) {
 
     $batch = array(
       'operations' => $operations,
-      'title' => t('Importing articles and menu from Borger.dk'),
+      'title' => t('Importing articles from Borger.dk'),
       'init_message' => t('Import job is starting.'),
       'progress_message' => t('Processed @current out of @total.'),
       'finished' => 'os2web_borger_dk_batch_article_import_finished',
@@ -1517,12 +1518,12 @@ function _os2web_borger_dk_batch_article_import($external_id_list, $max_count, $
 function _os2web_borger_dk_articles_cronbatch_wrapper() {
  // _os2web_borger_dk_menus_cronbatch(TRUE);
   $context['sandbox']['progress']++;
-  $context['message'] = t("Importing the menu from Borger.dk.");
+  $context['message'] = t("Importing articles from Borger.dk.");
   $context['finished'] = 1; 
 }
 
-function os2web_borger_dk_batch_article_import_finished() {
-      if ($success) {
+function os2web_borger_dk_batch_article_import_finished($success, $results, $operations) {
+  if ($success) {
     drupal_set_message(t('@count results processed.', array('@count' => count($results))));
     drupal_set_message(t('The final result was "%final"', array('%final' => end($results))));
   }
@@ -1851,10 +1852,12 @@ function _os2web_borger_dk_create_menustructure_cronbatch_wrapper($max_count, &$
 
 function os2web_borger_dk_batch_menustructure_create_finished($success, $results, $operations) {
   if ($success) {
+    $menu_name = variable_get('build_borger_menu_under_menu');
     //drupal_set_message(t('@count results processed.', array('@count' => count($results))));
     //drupal_set_message(t('The final result was "%final"', array('%final' => end($results))));
-    drupal_set_message(t('Borger.dk menu import is finished.'));
-    drupal_set_message(t('You can view the menu structure here "!url".', array('!url' => l(t('Borger.dk menu'), 'admin/structure/menu'))));
+    drupal_set_message(t('Borger.dk menu structure import is finished.'));
+    drupal_set_message(t('You can view the menu structure here "!url".',
+                         array('!url' => l(t('Borger.dk menu structure'), 'admin/structure/menu/manage/'. $menu_name))));
   }
   else {
     $error_operation = reset($operations);
@@ -1864,7 +1867,7 @@ function os2web_borger_dk_batch_menustructure_create_finished($success, $results
   menu_cache_clear_all();
 
   // Finished.
-  drupal_goto('admin/config/os2web_borger_dk');
+  drupal_goto('admin/config/os2web_borger_dk/settings');
 }
 /***************** End of menu import *****************************************/
 
