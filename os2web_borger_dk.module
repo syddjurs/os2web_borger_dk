@@ -213,7 +213,7 @@ function os2web_borger_dk_form_alter(&$form, &$form_state, $form_id) {
                   $weight = '6.' . ($microno - 10);
                 }
                 else {
-                  $weight = '5.'.$microno;
+                  $weight = '5.' . $microno;
                 }
                 // For each microarticle we build a fieldset, a textfield for
                 // title, a textarea for div content and a checkbox for
@@ -1132,7 +1132,7 @@ function os2web_borger_dk_cron() {
         // It is "about" a week ago now, so we start the cronbatch-job now.
         _os2web_borger_dk_menus_cronbatch();
       }
-      else if (empty($weekly) || ($weekly == 0)) {
+      elseif (empty($weekly) || ($weekly == 0)) {
         // If run daily then we start the cronbatch-job now.
         _os2web_borger_dk_menus_cronbatch();
       }
@@ -1356,7 +1356,9 @@ function _os2web_borger_dk_insert_links_into_menu(&$menu, $link_item) {
   //print '_os2web_borger_dk_articles_insert_links_into_menu started for parent: '. $parent_name ."\n";
   $errors = array();
   reset($menu);
-  if (isset($ptr)) { unset($ptr); }
+  if (isset($ptr)) {
+    unset($ptr);
+  }
   //$log .= '-> Going to insert link-item: '. print_r($link_item, TRUE) ."\n";
   //print '-> Going to insert link-item: '. print_r($link_item, TRUE) ."\n";
   $title = $link_item['ArticleTitle'];
@@ -1399,7 +1401,7 @@ function _os2web_borger_dk_insert_links_into_menu(&$menu, $link_item) {
         $ptr = &$ptr['nl'][$key];
       }
     }
-    $log .= '-> Found this ptr-menu-item: '. print_r($ptr, TRUE) ."\n";
+    $log .= '-> Found this ptr-menu-item: ' . print_r($ptr, TRUE) . "\n";
     $litem_id = $link_item['ArticleID'];
     if (isset($ptr['Links']) && is_array($ptr['Links'])) {
       //$log .= '--> NOTICE: This item already contains links <--'."\n";
@@ -1409,7 +1411,7 @@ function _os2web_borger_dk_insert_links_into_menu(&$menu, $link_item) {
       $ptr['Links'] = array();
       $ptr['Links'][$litem_id] = $link_item;
     }
-    $log .= '==> Inserted links here: '. print_r($ptr, TRUE) ."\n====================================\n\n";
+    $log .= '==> Inserted links here: ' . print_r($ptr, TRUE) . "\n====================================\n\n";
     //print $log;
   }
   else {

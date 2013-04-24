@@ -1,3 +1,7 @@
+/**
+ * @file os2web_borger_dk.js
+ */
+
 (function($) {
   Drupal.behaviors.os2web_borger_dk = {
     attach: function(context) {
