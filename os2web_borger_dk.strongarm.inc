@@ -70,7 +70,7 @@ function os2web_borger_dk_strongarm() {
   $strongarm->api_version = 1;
   $strongarm->name = 'menu_options_os2web_borger_dk_article';
   $strongarm->value = array(
-    0 => 'menu-contentmenu',
+    0 => 'os2web-menu-contentmenu',
   );
   $export['menu_options_os2web_borger_dk_article'] = $strongarm;
 
