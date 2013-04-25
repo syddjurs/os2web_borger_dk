@@ -9,7 +9,7 @@ projects[os2web_taxonomies][type] = "module"
 projects[os2web_taxonomies][download][type] = "git"
 ;projects[os2web_taxonomies][download][tag] = "1.10"
 projects[os2web_taxonomies][download][branch] = "master"
-projects[os2web_taxonomies][download][url] = "git://github.com/OS2web/os2web_taxonomies.git"
+projects[os2web_taxonomies][download][url] = "https://github.com/OS2web/os2web_taxonomies.git"
 
 ;; Contrib modules below:
 
