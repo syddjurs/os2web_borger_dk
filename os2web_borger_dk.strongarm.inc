@@ -78,7 +78,7 @@ function os2web_borger_dk_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'menu_parent_os2web_borger_dk_article';
-  $strongarm->value = 'menu-contentmenu:0';
+  $strongarm->value = 'os2web-menu-contentmenu:0';
   $export['menu_parent_os2web_borger_dk_article'] = $strongarm;
 
   $strongarm = new stdClass();
