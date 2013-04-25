@@ -165,7 +165,7 @@ function os2web_borger_dk_settings_form($form, $form_state) {
   $form['os2web_borger_dk_settings_6']['os2web_borger_dk_menus_import'] = array(
     '#type' => 'checkbox',
     '#title' => t('Import and utilize Borger.dk-menus'),
-    '#description' => t('Check to enable the menu-import from Borger.dk'),
+    '#description' => t('Check to enable the menu-import from Borger.dk.'),
     '#default_value' => variable_get('os2web_borger_dk_menus_import', 0),
   );
   $form['os2web_borger_dk_settings_6']['os2web_borger_dk_borger_dk_menu_name'] = array(
@@ -174,9 +174,9 @@ function os2web_borger_dk_settings_form($form, $form_state) {
     '#description' => t("The imported menu will be put into a local menu by the name given here."),
     '#default_value' => variable_get('os2web_borger_dk_borger_dk_menu_name', 'Borger.dk menu'),
   );
-  $sync_options = drupal_map_assoc(range(1, 24));
-  $sync_options[0] = t('Disabled (No menu syncronization)');
-  $form['os2web_borger_dk_settings_6']['os2web_borger_dk_nightly_menu_sync'] = array(
+  //$sync_options = drupal_map_assoc(range(1, 24));
+  //$sync_options[0] = t('Disabled (No menu syncronization)');
+  /*$form['os2web_borger_dk_settings_6']['os2web_borger_dk_nightly_menu_sync'] = array(
     '#type' => 'select',
     '#title' => t('Select when the menu-structure should be imported'),
     '#options' => $sync_options,
@@ -188,7 +188,35 @@ function os2web_borger_dk_settings_form($form, $form_state) {
     '#title' => t('Should Borger.dk-menus be updated weekly'),
     '#description' => t('Check to enable weekly menu-import from Borger.dk (otherwise menus are imported daily)'),
     '#default_value' => variable_get('os2web_borger_dk_weekly_borger_dk_menus_import', 0),
+  );*/
+  $form['os2web_borger_dk_settings_6']['os2web_borger_dk_menu_import_description']= array(
+    '#type' => 'fieldset',
+    '#title' => t('Description for importing Borger.dk menu structure'),
+    '#description' => t("Before you import Borger.dk menu structure, please create a content type
+                        which is called 'menu_page'(machine name) with title and body fields.
+                        Step1 : Please import Borger.dk-menu items now.
+                        Step2 : When Borger.dk menu items are imported, please import all Borger.dk articles.
+                        Step 3 : Create Borger.dk menu structure now."),
   );
+  $menu_option = array();
+  $existing_menu = db_query('SELECT * FROM {menu_custom}');
+  $menu_option['borgerdkmenu2'] = variable_get('os2web_borger_dk_borger_dk_menu_name', 'Borger.dk menu');
+  if ($existing_menu) {
+    foreach ($existing_menu as $menu_item) {
+      $menu_name = $menu_item->menu_name;
+      $menu_title = $menu_item->title;
+      $menu_option[$menu_name] = $menu_title;
+    }
+  }
+  $form['os2web_borger_dk_settings_6']['build_borger_menu_under_menu'] = array(
+    '#type' => 'select',
+    '#title' => t('Select Borger.dk menu Parent Item'),
+    '#options' => $menu_option,
+    '#description' => t('Select Borger.dk menu Parent Item from the list. REMEMBER to save before you start import Menu.'),
+    '#default_value' => variable_get('build_borger_menu_under_menu','borgerdkmenu2'),
+    '#type' => 'select',
+  );
+  //variable_set('build_borger_menu_under_menu');
 
   $disabled = FALSE;
   $description = '';
@@ -198,12 +226,27 @@ function os2web_borger_dk_settings_form($form, $form_state) {
     $description = 'If you want to import the Borger.dk menu you must first activate "Import and utilize Borger.dk-menus" and save the settings';
     drupal_set_message(t($description));
   }
-  $form['os2web_borger_dk_settings_6']['import_menu_and_articles_now'] = array(
+  $form['os2web_borger_dk_settings_6']['submit']= array(
     '#type' => 'submit',
-    '#value' => 'Import Borger.dk-menu and articles now',
-    '#submit' => array('os2web_borger_dk_import_now_form_submit'),
+    '#value' => 'Import Borger.dk-menu now',
+    '#submit' => array('os2web_borger_dk_import_menu_now_form_submit'),
     '#disabled' => $disabled,
-    '#description' => t($description),
+
+   // '#description' => t(' Step1 : Please import Borger.dk menu items.'),
+  );
+  $form['os2web_borger_dk_settings_6']['import_all_articles_now'] = array(
+    '#type' => 'submit',
+    '#value' => 'Import Borger.dk articles',
+    '#submit' => array('os2web_borger_dk_import_articles_now_form_submit'),
+    '#disabled' => $disabled,
+    '#description' => t(' Step2 : When Borger.dk menu items are imported, please import all Borger.dk articles.'),
+  );
+    $form['os2web_borger_dk_settings_6']['create_borger_dk_menu_links'] = array(
+    '#type' => 'submit',
+    '#value' => t('Create Borger.dk menu structure now'),
+    '#submit' => array('os2web_borger_dk_create_borger_dk_menu_now_form_submit'),
+    '#disabled' => $disabled,
+    '#description' => t('Step 3 : Create Borger.dk menu structure now.'),
   );
 
   $form['os2web_borger_dk_settings_7'] = array(
