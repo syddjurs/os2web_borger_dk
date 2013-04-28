@@ -1196,7 +1196,6 @@ function _os2web_borger_dk_import_menu_items($group, $total, $parent_array,$menu
   foreach ($group as $item) {
     $item_siteID = $item['SiteID'];
     $item_pID = $item['ParentID'];
-    $link_path = 'node';
     $menu_item = array();
     // The first menu item from Borger.dk does NOT contain a parent ID.
     //'Emner', it is the root of Borger.dk menu tree structure.
@@ -1205,9 +1204,10 @@ function _os2web_borger_dk_import_menu_items($group, $total, $parent_array,$menu
                               array('link_title' => $item['SiteTitle'], 'menu_name' => $menu_name))->fetchAssoc();
       // If the menu link is NOT existed.
       if (!$mlid) {
+        $nid = _os2web_borger_dk_create_menu_page($item);
         $menu_item = array(
         'menu_name' => $menu_name, 
-        'link_path' => $link_path,
+        'link_path' => "node/" . $nid,
         'link_title' => $item['SiteTitle'],
         'module' => 'os2web_borger_dk',
         'plid' => $item_pID,
@@ -1553,7 +1553,6 @@ function os2web_borger_dk_create_borger_dk_menu_now_form_submit($form, &$form_st
     // Then import the menu from Borger.dk and tag all imported articles.
     $operations[] = array('_os2web_borger_dk_create_menustructure_cronbatch_wrapper', array($total));
 
-    //error_log('os2web_borger_dk_import_now_form_submit created this batch-setup: '. print_r($batch, TRUE) ."\n\n", 3, '/srv/www/log/borger_dk_batch.log');
     foreach ($menu_items_availlable as $item) {
       $operations[] = array('_os2web_borger_dk_create_borger_dk_meun_structure', array($item, $total, $menu_name));
     }
@@ -1582,12 +1581,14 @@ function _os2web_borger_dk_create_borger_dk_meun_structure($item, $total, $menu_
     $context['sandbox']['max'] = $total ;
   }
 
+  // Search each menu link under the given menu_name.
   $pid = db_query('SELECT * FROM {menu_links} WHERE link_title= :link_title AND menu_name = :menu_name',
                   array('link_title' => $item['SiteTitle'], 'menu_name' => $menu_name))->fetchAssoc();
   if ($pid) {
-
+    // If the menu link is existed, then get all article IDs in the menu link page.
     $wsdl = variable_get('os2web_borger_dk_webservice', 'https://www.borger.dk/_vti_bin/borger/ArticleExport.svc?wsdl');
     $article_ids = _os2web_borger_dk_GetArticleIDsBySiteID($item['SiteID'], $wsdl);
+    // When there are articles with IDs under the page.
     if (!empty($article_ids)) {
       foreach ($article_ids as $id => $value) {
         // TODO: check if the links is existed.!!!!
@@ -1713,6 +1714,7 @@ function _os2web_borger_dk_create_borger_dk_meun_structure($item, $total, $menu_
         $context['sandbox']['progress']++;
       }
     }
+    /*
     // TODO: list links for menu page.here!
     $node_id = $pid['link_path'];
     $node_id = substr($node_id, 5, strlen($node_id)-1);
@@ -1734,7 +1736,7 @@ function _os2web_borger_dk_create_borger_dk_meun_structure($item, $total, $menu_
         $node->body['und'][0]['format'] = 'full_html';
         node_save($node);
       }
-    }
+    }*/
   }
   //}
   $context['finished'] = 1;
