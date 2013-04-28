@@ -237,7 +237,7 @@
       print "<div class='panel-separator'></div>";
     }
 
-    if (!empty($content['field_os2web_borger_dk_legislati'])) {
+    if (!empty($content_field['field_os2web_borger_dk_legislati'])) {
       print "<div class='borger_dk-field_os2web-borger-dk-legislati'>";
       print render($content['field_os2web_borger_dk_legislati']);
       print "</div>";
