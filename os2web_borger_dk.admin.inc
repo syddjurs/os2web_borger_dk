@@ -212,7 +212,7 @@ function os2web_borger_dk_settings_form($form, $form_state) {
     '#type' => 'select',
     '#title' => t('Select Borger.dk menu Parent Item'),
     '#options' => $menu_option,
-    '#description' => t('Select Borger.dk menu Parent Item from the list. REMEMBER to save before you start import Menu.'),
+    '#description' => t('Select Borger.dk menu Parent Item from the list. REMEMBER to save before you start Menu import.'),
     '#default_value' => variable_get('build_borger_menu_under_menu','borgerdkmenu2'),
     '#type' => 'select',
   );

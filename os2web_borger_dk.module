@@ -1244,20 +1244,27 @@ function _os2web_borger_dk_import_menu_items($group, $total, $parent_array,$menu
 }
 
 function _os2web_borger_dk_create_menu_page($item) {
+  $result = db_query('SELECT * FROM {node} WHERE type = :type AND title = :title',
+                     array('type' =>'menu_page','title' => $item['SiteTitle']))->fetchAssoc();
+  if (!$result) {
+    $node = new stdClass();
+    $node->created = !empty($node->date) ? strtotime($node->date) : REQUEST_TIME;
+    $node->validated = TRUE;
 
-  $node = new stdClass();
-  $node->created = !empty($node->date) ? strtotime($node->date) : REQUEST_TIME;
-  $node->validated = TRUE;
+    // Insert default value of a new node.
+    $node->type = 'menu_page';
+    $node->title = $item['SiteTitle'];
+    $node->body['und']['0']['value'] = '';
+    $node->body['und']['0']['safe_value'] = '';
+    $node->body['und'][0]['format'] = 'full_html';
+    $node = node_submit($node);
+    node_save($node);
+    return $node->nid;
+  }
+  else {
+    return $result['nid'];
+  }
 
-  // Insert default value of a new node.
-  $node->type = 'menu_page';
-  $node->title = $item['SiteTitle'];
-  $node->body['und']['0']['value'] = '';
-  $node->body['und']['0']['safe_value'] = '';
-  $node->body['und'][0]['format'] = 'full_html';
-  $node = node_submit($node);
-  node_save($node);
-  return $node->nid;
 }
 
 /**
@@ -1534,6 +1541,10 @@ function os2web_borger_dk_batch_article_import_finished($success, $results, $ope
   }
   drupal_goto('admin/config/os2web_borger_dk/settings');
 }
+/**
+ * Function os2web_os2web_borger_dk_create_borger_dk_menu_now_form_submit().
+ * Create links to articles under a chosen menu.
+ */
 function os2web_borger_dk_create_borger_dk_menu_now_form_submit($form, &$form_state) {
   if ($form_state['submitted'] == 1) {
 
@@ -1579,6 +1590,16 @@ function _os2web_borger_dk_create_borger_dk_meun_structure($item, $total, $menu_
     $context['sandbox'] = array();
     $context['sandbox']['progress'] = 0;
     $context['sandbox']['max'] = $total ;
+  }
+  /* This part is only for Ishøj kommune or other users where they create their own
+   * 'Emner' menu link and rename it to 'Borger'.
+   */
+  if ($item['SiteTitle'] == 'Emner') {
+    $result = db_query('SELECT * FROM {menu_links} WHERE link_title= :link_title AND menu_name = :menu_name',
+                  array('link_title' => 'Borger', 'menu_name' => $menu_name))->fetchAssoc();
+    if ($result) {
+      $item['SiteTitle'] = 'Borger';
+    }
   }
 
   // Search each menu link under the given menu_name.
