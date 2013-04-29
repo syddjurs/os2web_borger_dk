@@ -2939,8 +2939,8 @@ function _os2web_borger_dk_check_webservice_constraints() {
 function os2web_borger_dk_os2web_help($sections) {
 
   // Content types.
-  $sections['contenttype'] = t('<p><b>Borger.dk Article:</b> Add <a href="@url" target="_blank">borger.dk articles</a> directly from borger.dk, and implement them in your sites structure.<br /><i><a href="@borger" target="_blank">See the advanced documentation for the borger.dk module</a></i></p>', array('@url' => url('node/add/os2web-borger-dk-article'), '@borger' => url('admin/help/os2web_borger_dk')));
-  $sections['import'] = t('<p><b>Automatic import of Borger.dk articles:</b><a href="@url" target="_blank">Configure automatic import and syncronization of articles located on Borger.dk</a></p>', array('@url' => url('admin/config/os2web_borger_dk/settings')));
+  $sections['contenttype'] = t('<p><b>Borger.dk Article:</b> Add <a href="@url" target="_blank">borger.dk articles</a> directly from borger.dk, and implement them in your sites structure.<br /><i><a href="@borger" target="_blank">See the advanced documentation for the borger.dk module</a>(.pdf)</i></p>', array('@url' => url('node/add/os2web-borger-dk-article'), '@borger' => file_create_url(drupal_get_path('module', 'os2web_borger_dk') . '/doc/Guide til OS2web borger.dk - articles.pdf')));
+  $sections['import'] = t('<p><b>Automatic import of Borger.dk articles:</b><a href="@url" target="_blank">Configure automatic import and syncronization of articles located on Borger.dk</a><br />See an advanced guide for setting up an import here: <a href="@import-guide" target="_blank">Borger.dk menu import.pdf</a>(<i>Danish only</i>)</p>', array('@url' => url('admin/config/os2web_borger_dk/settings'), '@import-guide' => file_create_url(drupal_get_path('module', 'os2web_borger_dk') . '/doc/Borger.dk menu import.pdf')));
   return $sections;
 
 }
