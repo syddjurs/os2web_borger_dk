@@ -1,12 +1,11 @@
 #borger_dk-body h2 {
   background-image: url('../images/foldOut.png');
-  background-position: 98% 70%;
+  background-position: 98% 50%;
   background-repeat: no-repeat;
   border-top: 1px solid #dddddd;
-  font-family: inherit;
   font-size: 16px !important;
   margin-bottom: 2px;
-  padding-top: 1px;
+  padding: 5px 0;
 }
 
 #borger_dk-body p {
@@ -15,7 +14,7 @@
   line-height: 19px;
 }
 
-.microArticle {
+#borger_dk-body {
   color: #4A4A4A;
   font-size: 13px;
   line-height: 19px;
@@ -48,26 +47,28 @@ div.microArticle a {
   border-bottom: 1px solid #BBC5A8;
   color: #526A27;
   /*font-family: "myriad-pro",Arial,Helvetica,sans-serif;*/
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 300;
+  padding-bottom: 5px;
 }
 
 .os2web_borger_dk_selfservi ul li,
 .borger_dk-region-stack2 ul li {
+  line-height: 22px;
   list-style-image: url("../images/arrowGreen.png");
 
 }
 
 .borger_dk-region-stack3 ul li,
 .borger_dk-region-stack4 ul li {
-  list-style-image: url("../images/megamenu-arrow-over.png");
+  line-height: 20px;
+  list-style-image: url("../images/arrowGreen.png");
 }
 
 
 .os2web_borger_dk_selfservi ul li a, .os2web_borger_dk_selfservi a:link{
   color: #526A27;
   font-size: 13px;
-  list-style-image: url("../images/arrowGreen.png");
   /*list-style-type: disc;
   text-decoration: underline;*/
 }
@@ -89,8 +90,10 @@ div.microArticle a {
 }
 
 .borger_dk_body_intro_text {
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 300;
+  padding-bottom: 5px;
+  padding-top: 15px;
 }
 
 .borger_dk-region-stack3 .inside .borger_dk-body.node-body div a:link a:visited,
@@ -98,7 +101,6 @@ div.microArticle a {
 .borger_dk-region-stack3 .inside .borger_dk-field_os2web-borger-dk-legislati div a {
   color: #2d2d2d;
   font-size: 13px;
-  list-style-image: url("../images/arrowGreen.png");
 /*  list-style-type: disc;
   text-decoration: underline;*/
 }
@@ -107,7 +109,6 @@ div.microArticle a {
   color: #2d2d2d;
   font-size: 13px;
   line-height: 19px;
-  list-style-image: url("../images/arrowGreen.png");
  /* list-style-type: disc;
   text-decoration: underline;*/
 }
