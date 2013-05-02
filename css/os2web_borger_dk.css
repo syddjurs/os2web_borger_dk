@@ -53,7 +53,11 @@ div.microArticle a {
 }
 
 .os2web_borger_dk_selfservi ul li,
-.borger_dk-region-stack2 ul li,
+.borger_dk-region-stack2 ul li {
+  list-style-image: url("../images/arrowGreen.png");
+
+}
+
 .borger_dk-region-stack3 ul li,
 .borger_dk-region-stack4 ul li {
   list-style-image: url("../images/megamenu-arrow-over.png");
