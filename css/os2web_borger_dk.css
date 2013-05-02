@@ -14,6 +14,13 @@
   font-size: 12px;
   line-height: 19px;
 }
+
+.microArticle {
+  color: #4A4A4A;
+  font-size: 12px;
+  line-height: 19px;
+}
+
 div.microArticle a {
   color: #496E04;
 }
@@ -123,7 +130,7 @@ div.microArticle a {
 .borger_dk-region-stack3 .inside .borger_dk-body.node-body div div ul,
 .borger_dk-region-stack4 .inside .borger_dk-field_os2web-borger-dk-recommend ul,
 .borger_dk-region-stack4 .inside .borger_dk-field_os2web-borger-dk-shortlist ul {
-   /* margin: 0 0 1.5em 2em;*/
+  margin: 10px 0 0 20px;
 }
 .borger_dk-field_os2web-borger-dk-byline {
   font-family: "myriad-pro",Arial,Helvetica,sans-serif;
