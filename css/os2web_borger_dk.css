@@ -52,6 +52,14 @@ div.microArticle a {
   font-weight: 300;
 }
 
+.os2web_borger_dk_selfservi ul li,
+.borger_dk-region-stack2 ul li,
+.borger_dk-region-stack3 ul li,
+.borger_dk-region-stack4 ul li {
+  list-style-image: url("../images/megamenu-arrow-over.png");
+}
+
+
 .os2web_borger_dk_selfservi ul li a, .os2web_borger_dk_selfservi a:link{
   color: #526A27;
   font-size: 13px;
