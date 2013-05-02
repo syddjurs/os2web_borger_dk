@@ -32,4 +32,5 @@ projects[ctools][subdir] = "contrib"
 projects[ctools][version] = "1.2"
 
 projects[media][subdir] = "contrib"
-projects[media][version] = "1.3"
+projects[media][version] = "2.0-unstable7"
+projects[media][patch][] = "http://drupal.org/files/media-media_browser-preview_javascript_incompatibility-1743040.patch"
