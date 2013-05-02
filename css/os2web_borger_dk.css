@@ -11,13 +11,13 @@
 
 #borger_dk-body p {
   color: #4A4A4A;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 19px;
 }
 
 .microArticle {
   color: #4A4A4A;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 19px;
 }
 
@@ -34,14 +34,13 @@ div.microArticle a {
   font-family: "myriad-pro",Arial,Helvetica,sans-serif;
   font-size: 20px;
   font-weight: 300;
-  margin-left: 10px;
   padding: 0px 5px 10px 10px;
 }
 
 .os2web_borger_dk_selfservi {
   clear: both;
   padding: 10px 15px;
-  background-color: #D9E5C3;
+  background-color: #d9e5c3;
   border-radius: 7px 7px 7px 7px;
 }
 
@@ -56,6 +55,7 @@ div.microArticle a {
 .os2web_borger_dk_selfservi ul li a, .os2web_borger_dk_selfservi a:link{
   color: #526A27;
   font-size: 13px;
+  list-style-image: url("../images/megamenu-arrow-over.png");
   /*list-style-type: disc;
   text-decoration: underline;*/
 }
@@ -86,6 +86,7 @@ div.microArticle a {
 .borger_dk-region-stack3 .inside .borger_dk-field_os2web-borger-dk-legislati div a {
   color: #2d2d2d;
   font-size: 13px;
+  list-style-image: url("../images/megamenu-arrow-over.png");
 /*  list-style-type: disc;
   text-decoration: underline;*/
 }
@@ -93,6 +94,7 @@ div.microArticle a {
 .borger_dk-region-stack4 .inside .borger_dk-field_os2web-borger-dk-shortlist ul li a {
   color: #2d2d2d;
   font-size: 13px;
+  list-style-image: url("../images/megamenu-arrow-over.png");
  /* list-style-type: disc;
   text-decoration: underline;*/
 }
