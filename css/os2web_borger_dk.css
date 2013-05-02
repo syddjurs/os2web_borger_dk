@@ -9,7 +9,7 @@
 }
 
 #borger_dk-body h5 {
-  padding: 10px 0;
+  padding: 13px 0;
   font-size: 16px !important;
 }
 
@@ -140,6 +140,10 @@ div.microArticle a {
   font-size: 18px;
   font-weight: 300;
 }
+.borger_dk-field_os2web-borger-dk-legislati {
+  padding-top: 10px;
+}
+
 .borger_dk-field_os2web-borger-dk-legislati,
 .borger_dk-field_os2web-borger-dk-recommend,
 .borger_dk-field_os2web-borger-dk-shortlist {
