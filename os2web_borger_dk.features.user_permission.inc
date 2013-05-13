@@ -14,10 +14,10 @@ function os2web_borger_dk_user_default_permissions() {
   $permissions['create os2web_borger_dk_article content'] = array(
     'name' => 'create os2web_borger_dk_article content',
     'roles' => array(
-      0 => 'Administrator',
-      1 => 'Editor',
-      2 => 'Kommunikation',
-      3 => 'Webmaster',
+      'Administrator' => 'Administrator',
+      'Editor' => 'Editor',
+      'Kommunikation' => 'Kommunikation',
+      'Webmaster' => 'Webmaster',
     ),
     'module' => 'node',
   );
@@ -26,9 +26,9 @@ function os2web_borger_dk_user_default_permissions() {
   $permissions['delete any os2web_borger_dk_article content'] = array(
     'name' => 'delete any os2web_borger_dk_article content',
     'roles' => array(
-      0 => 'Administrator',
-      1 => 'Editor',
-      2 => 'Webmaster',
+      'Administrator' => 'Administrator',
+      'Editor' => 'Editor',
+      'Webmaster' => 'Webmaster',
     ),
     'module' => 'node',
   );
@@ -37,10 +37,10 @@ function os2web_borger_dk_user_default_permissions() {
   $permissions['delete own os2web_borger_dk_article content'] = array(
     'name' => 'delete own os2web_borger_dk_article content',
     'roles' => array(
-      0 => 'Administrator',
-      1 => 'Editor',
-      2 => 'Kommunikation',
-      3 => 'Webmaster',
+      'Administrator' => 'Administrator',
+      'Editor' => 'Editor',
+      'Kommunikation' => 'Kommunikation',
+      'Webmaster' => 'Webmaster',
     ),
     'module' => 'node',
   );
@@ -49,9 +49,9 @@ function os2web_borger_dk_user_default_permissions() {
   $permissions['edit any os2web_borger_dk_article content'] = array(
     'name' => 'edit any os2web_borger_dk_article content',
     'roles' => array(
-      0 => 'Administrator',
-      1 => 'Editor',
-      2 => 'Webmaster',
+      'Administrator' => 'Administrator',
+      'Editor' => 'Editor',
+      'Webmaster' => 'Webmaster',
     ),
     'module' => 'node',
   );
@@ -60,10 +60,10 @@ function os2web_borger_dk_user_default_permissions() {
   $permissions['edit own os2web_borger_dk_article content'] = array(
     'name' => 'edit own os2web_borger_dk_article content',
     'roles' => array(
-      0 => 'Administrator',
-      1 => 'Editor',
-      2 => 'Kommunikation',
-      3 => 'Webmaster',
+      'Administrator' => 'Administrator',
+      'Editor' => 'Editor',
+      'Kommunikation' => 'Kommunikation',
+      'Webmaster' => 'Webmaster',
     ),
     'module' => 'node',
   );
