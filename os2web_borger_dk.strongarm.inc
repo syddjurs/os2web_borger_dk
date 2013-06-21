@@ -50,7 +50,7 @@ function os2web_borger_dk_strongarm() {
           'weight' => '0',
         ),
         'path' => array(
-          'weight' => '13',
+          'weight' => '4',
         ),
       ),
       'display' => array(),
