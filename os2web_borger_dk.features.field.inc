@@ -125,7 +125,7 @@ function os2web_borger_dk_field_default_fields() {
           'summary_rows' => 5,
         ),
         'type' => 'text_textarea_with_summary',
-        'weight' => '6',
+        'weight' => '26',
       ),
     ),
   );
@@ -226,7 +226,327 @@ function os2web_borger_dk_field_default_fields() {
           'progress_indicator' => 'throbber',
         ),
         'type' => 'media_generic',
-        'weight' => '3',
+        'weight' => '23',
+      ),
+    ),
+  );
+
+  // Exported field: 'node-os2web_borger_dk_article-field_indholdsside_spotboxe'.
+  $fields['node-os2web_borger_dk_article-field_indholdsside_spotboxe'] = array(
+    'field_config' => array(
+      'active' => '1',
+      'cardinality' => '-1',
+      'deleted' => '0',
+      'entity_types' => array(),
+      'field_name' => 'field_indholdsside_spotboxe',
+      'foreign keys' => array(
+        'nid' => array(
+          'columns' => array(
+            'nid' => 'nid',
+          ),
+          'table' => 'node',
+        ),
+      ),
+      'indexes' => array(
+        'nid' => array(
+          0 => 'nid',
+        ),
+      ),
+      'locked' => '0',
+      'module' => 'node_reference',
+      'settings' => array(
+        'referenceable_types' => array(
+          'borger_dk_permalink' => 0,
+          'contentpage' => 0,
+          'esdh_dokument' => 0,
+          'esdh_sag' => 0,
+          'files' => 0,
+          'galleri' => 0,
+          'iframe_selvbetjeningsl_sning_mm' => 0,
+          'institution' => 0,
+          'knactivity' => 0,
+          'kontaktblok' => 0,
+          'local_plan' => 0,
+          'media' => 0,
+          'news' => 0,
+          'ofir_job' => 0,
+          'panel' => 0,
+          'person' => 0,
+          'politician' => 0,
+          'referat' => 0,
+          'right_column' => 0,
+          'rotating_image' => 0,
+          'selvbetjeningslinks' => 0,
+          'spotbox' => 'spotbox',
+          'tema' => 0,
+          'webform' => 0,
+        ),
+        'view' => array(
+          'args' => array(),
+          'display_name' => '',
+          'view_name' => '',
+        ),
+      ),
+      'translatable' => '0',
+      'type' => 'node_reference',
+    ),
+    'field_instance' => array(
+      'bundle' => 'os2web_borger_dk_article',
+      'default_value' => NULL,
+      'deleted' => '0',
+      'description' => '',
+      'display' => array(
+        'default' => array(
+          'label' => 'above',
+          'module' => 'node_reference',
+          'settings' => array(),
+          'type' => 'node_reference_default',
+          'weight' => 14,
+        ),
+        'related_block' => array(
+          'label' => 'above',
+          'settings' => array(),
+          'type' => 'hidden',
+          'weight' => 0,
+        ),
+        'teaser' => array(
+          'label' => 'above',
+          'settings' => array(),
+          'type' => 'hidden',
+          'weight' => 0,
+        ),
+      ),
+      'entity_type' => 'node',
+      'field_name' => 'field_indholdsside_spotboxe',
+      'label' => 'Spotboxe',
+      'required' => 0,
+      'settings' => array(
+        'user_register_form' => FALSE,
+      ),
+      'widget' => array(
+        'active' => 1,
+        'module' => 'node_reference',
+        'settings' => array(
+          'autocomplete_match' => 'contains',
+          'autocomplete_path' => 'node_reference/autocomplete',
+          'size' => '60',
+        ),
+        'type' => 'node_reference_autocomplete',
+        'weight' => '36',
+      ),
+    ),
+  );
+
+  // Exported field: 'node-os2web_borger_dk_article-field_node_reference_kontaktblok'.
+  $fields['node-os2web_borger_dk_article-field_node_reference_kontaktblok'] = array(
+    'field_config' => array(
+      'active' => '1',
+      'cardinality' => '1',
+      'deleted' => '0',
+      'entity_types' => array(),
+      'field_name' => 'field_node_reference_kontaktblok',
+      'foreign keys' => array(
+        'nid' => array(
+          'columns' => array(
+            'nid' => 'nid',
+          ),
+          'table' => 'node',
+        ),
+      ),
+      'indexes' => array(
+        'nid' => array(
+          0 => 'nid',
+        ),
+      ),
+      'locked' => '0',
+      'module' => 'node_reference',
+      'settings' => array(
+        'referenceable_types' => array(
+          'borger_dk_permalink' => 0,
+          'borgerservices' => 0,
+          'contentpage' => 0,
+          'esdh_dokument' => 0,
+          'esdh_sag' => 0,
+          'files' => 0,
+          'galleri' => 0,
+          'iframe_selvbetjeningsl_sning_mm' => 0,
+          'institution' => 0,
+          'knactivity' => 0,
+          'kontaktblok' => 'kontaktblok',
+          'local_plan' => 0,
+          'media' => 0,
+          'news' => 0,
+          'ofir_job' => 0,
+          'panel' => 0,
+          'person' => 0,
+          'politician' => 0,
+          'referat' => 0,
+          'right_column' => 0,
+          'rotating_image' => 0,
+          'selvbetjeningslinks' => 0,
+          'spotbox' => 0,
+          'tema' => 0,
+          'webform' => 0,
+        ),
+        'view' => array(
+          'args' => array(),
+          'display_name' => '',
+          'view_name' => '',
+        ),
+      ),
+      'translatable' => '0',
+      'type' => 'node_reference',
+    ),
+    'field_instance' => array(
+      'bundle' => 'os2web_borger_dk_article',
+      'default_value' => NULL,
+      'deleted' => '0',
+      'description' => '',
+      'display' => array(
+        'default' => array(
+          'label' => 'above',
+          'module' => 'node_reference',
+          'settings' => array(),
+          'type' => 'node_reference_default',
+          'weight' => 15,
+        ),
+        'related_block' => array(
+          'label' => 'above',
+          'settings' => array(),
+          'type' => 'hidden',
+          'weight' => 0,
+        ),
+        'teaser' => array(
+          'label' => 'above',
+          'settings' => array(),
+          'type' => 'hidden',
+          'weight' => 0,
+        ),
+      ),
+      'entity_type' => 'node',
+      'field_name' => 'field_node_reference_kontaktblok',
+      'label' => 'Kontaktblok',
+      'required' => 0,
+      'settings' => array(
+        'user_register_form' => FALSE,
+      ),
+      'widget' => array(
+        'active' => 1,
+        'module' => 'node_reference',
+        'settings' => array(
+          'autocomplete_match' => 'contains',
+          'autocomplete_path' => 'node_reference/autocomplete',
+          'size' => '60',
+        ),
+        'type' => 'node_reference_autocomplete',
+        'weight' => '35',
+      ),
+    ),
+  );
+
+  // Exported field: 'node-os2web_borger_dk_article-field_noderef_selvbtjn'.
+  $fields['node-os2web_borger_dk_article-field_noderef_selvbtjn'] = array(
+    'field_config' => array(
+      'active' => '1',
+      'cardinality' => '-1',
+      'deleted' => '0',
+      'entity_types' => array(),
+      'field_name' => 'field_noderef_selvbtjn',
+      'foreign keys' => array(
+        'nid' => array(
+          'columns' => array(
+            'nid' => 'nid',
+          ),
+          'table' => 'node',
+        ),
+      ),
+      'indexes' => array(
+        'nid' => array(
+          0 => 'nid',
+        ),
+      ),
+      'locked' => '0',
+      'module' => 'node_reference',
+      'settings' => array(
+        'referenceable_types' => array(
+          'borger_dk_permalink' => 0,
+          'borgerservices' => 0,
+          'contentpage' => 0,
+          'esdh_dokument' => 0,
+          'esdh_sag' => 0,
+          'files' => 0,
+          'galleri' => 0,
+          'iframe_selvbetjeningsl_sning_mm' => 0,
+          'institution' => 0,
+          'knactivity' => 0,
+          'kontaktblok' => 0,
+          'local_plan' => 0,
+          'media' => 0,
+          'news' => 0,
+          'ofir_job' => 0,
+          'panel' => 0,
+          'person' => 0,
+          'politician' => 0,
+          'referat' => 0,
+          'right_column' => 0,
+          'rotating_image' => 0,
+          'selvbetjeningslinks' => 'selvbetjeningslinks',
+          'spotbox' => 0,
+          'tema' => 0,
+          'webform' => 0,
+        ),
+        'view' => array(
+          'args' => array(),
+          'display_name' => '',
+          'view_name' => '',
+        ),
+      ),
+      'translatable' => '0',
+      'type' => 'node_reference',
+    ),
+    'field_instance' => array(
+      'bundle' => 'os2web_borger_dk_article',
+      'default_value' => NULL,
+      'deleted' => '0',
+      'description' => '',
+      'display' => array(
+        'default' => array(
+          'label' => 'above',
+          'module' => 'node_reference',
+          'settings' => array(),
+          'type' => 'node_reference_default',
+          'weight' => 16,
+        ),
+        'related_block' => array(
+          'label' => 'above',
+          'settings' => array(),
+          'type' => 'hidden',
+          'weight' => 0,
+        ),
+        'teaser' => array(
+          'label' => 'above',
+          'settings' => array(),
+          'type' => 'hidden',
+          'weight' => 0,
+        ),
+      ),
+      'entity_type' => 'node',
+      'field_name' => 'field_noderef_selvbtjn',
+      'label' => 'Selvbetjeningslinks',
+      'required' => 0,
+      'settings' => array(
+        'user_register_form' => FALSE,
+      ),
+      'widget' => array(
+        'active' => 1,
+        'module' => 'node_reference',
+        'settings' => array(
+          'autocomplete_match' => 'contains',
+          'autocomplete_path' => 'node_reference/autocomplete',
+          'size' => '60',
+        ),
+        'type' => 'node_reference_autocomplete',
+        'weight' => '34',
       ),
     ),
   );
@@ -338,7 +658,7 @@ function os2web_borger_dk_field_default_fields() {
           'size' => '60',
         ),
         'type' => 'text_textfield',
-        'weight' => '1',
+        'weight' => '21',
       ),
     ),
   );
@@ -451,7 +771,7 @@ function os2web_borger_dk_field_default_fields() {
           'size' => '60',
         ),
         'type' => 'text_textfield',
-        'weight' => '8',
+        'weight' => '32',
       ),
     ),
   );
@@ -532,7 +852,7 @@ function os2web_borger_dk_field_default_fields() {
           'size' => 60,
         ),
         'type' => 'taxonomy_autocomplete',
-        'weight' => '15',
+        'weight' => '3',
       ),
     ),
   );
@@ -648,7 +968,7 @@ function os2web_borger_dk_field_default_fields() {
           'rows' => '5',
         ),
         'type' => 'text_textarea',
-        'weight' => '4',
+        'weight' => '24',
       ),
     ),
   );
@@ -764,7 +1084,7 @@ function os2web_borger_dk_field_default_fields() {
           'rows' => '5',
         ),
         'type' => 'text_textarea',
-        'weight' => '10',
+        'weight' => '29',
       ),
     ),
   );
@@ -877,7 +1197,7 @@ function os2web_borger_dk_field_default_fields() {
           'size' => '60',
         ),
         'type' => 'text_textfield',
-        'weight' => '2',
+        'weight' => '22',
       ),
     ),
   );
@@ -992,7 +1312,7 @@ function os2web_borger_dk_field_default_fields() {
           'rows' => '5',
         ),
         'type' => 'text_textarea',
-        'weight' => '7',
+        'weight' => '27',
       ),
     ),
   );
@@ -1108,7 +1428,7 @@ function os2web_borger_dk_field_default_fields() {
           'rows' => '5',
         ),
         'type' => 'text_textarea',
-        'weight' => '5',
+        'weight' => '25',
       ),
     ),
   );
@@ -1224,7 +1544,7 @@ function os2web_borger_dk_field_default_fields() {
           'rows' => '5',
         ),
         'type' => 'text_textarea',
-        'weight' => '11',
+        'weight' => '30',
       ),
     ),
   );
@@ -1340,7 +1660,7 @@ function os2web_borger_dk_field_default_fields() {
           'rows' => '5',
         ),
         'type' => 'text_textarea',
-        'weight' => '9',
+        'weight' => '28',
       ),
     ),
   );
@@ -1456,7 +1776,7 @@ function os2web_borger_dk_field_default_fields() {
           'rows' => '5',
         ),
         'type' => 'text_textarea',
-        'weight' => '12',
+        'weight' => '31',
       ),
     ),
   );
@@ -1537,7 +1857,7 @@ function os2web_borger_dk_field_default_fields() {
           'size' => 60,
         ),
         'type' => 'taxonomy_autocomplete',
-        'weight' => '14',
+        'weight' => '2',
       ),
     ),
   );
@@ -1551,13 +1871,16 @@ function os2web_borger_dk_field_default_fields() {
   t('FORM Emneord');
   t('Header');
   t('KL Emneord');
+  t('Kontaktblok');
   t('Legislation');
   t('Page title');
   t('Portalservice/self-service');
   t('Post-text');
   t('Pre-text');
   t('Recommended');
+  t('Selvbetjeningslinks');
   t('Shortlist');
+  t('Spotboxe');
 
   return $fields;
 }
