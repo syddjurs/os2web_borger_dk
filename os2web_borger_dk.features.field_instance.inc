@@ -101,8 +101,8 @@ function os2web_borger_dk_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-os2web_borger_dk_article-field_billede'
-  $field_instances['node-os2web_borger_dk_article-field_billede'] = array(
+  // Exported field_instance: 'node-os2web_borger_dk_article-field_os2web_borger_dk_image'
+  $field_instances['node-os2web_borger_dk_article-field_os2web_borger_dk_image'] = array(
     'bundle' => 'os2web_borger_dk_article',
     'deleted' => 0,
     'description' => '',
@@ -131,7 +131,7 @@ function os2web_borger_dk_field_default_field_instances() {
       ),
     ),
     'entity_type' => 'node',
-    'field_name' => 'field_billede',
+    'field_name' => 'field_os2web_borger_dk_image',
     'label' => 'Billede',
     'required' => 0,
     'settings' => array(
@@ -1091,8 +1091,8 @@ function os2web_borger_dk_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-os2web_borger_dk_article-field_termref_kle'
-  $field_instances['node-os2web_borger_dk_article-field_termref_kle'] = array(
+  // Exported field_instance: 'node-os2web_borger_dk_article-field_os2web_borger_dk_kle'
+  $field_instances['node-os2web_borger_dk_article-field_os2web_borger_dk_kle'] = array(
     'bundle' => 'os2web_borger_dk_article',
     'default_value' => NULL,
     'deleted' => 0,
@@ -1118,7 +1118,7 @@ function os2web_borger_dk_field_default_field_instances() {
       ),
     ),
     'entity_type' => 'node',
-    'field_name' => 'field_termref_kle',
+    'field_name' => 'field_os2web_borger_dk_kle',
     'label' => 'KL Emneord',
     'required' => 0,
     'settings' => array(

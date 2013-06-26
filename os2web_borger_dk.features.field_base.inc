@@ -10,13 +10,13 @@
 function os2web_borger_dk_field_default_field_bases() {
   $field_bases = array();
 
-  // Exported field_base: 'field_billede'
-  $field_bases['field_billede'] = array(
+  // Exported field_base: 'field_os2web_borger_dk_image'
+  $field_bases['field_os2web_borger_dk_image'] = array(
     'active' => 1,
     'cardinality' => -1,
     'deleted' => 0,
     'entity_types' => array(),
-    'field_name' => 'field_billede',
+    'field_name' => 'field_os2web_borger_dk_image',
     'foreign keys' => array(
       'fid' => array(
         'columns' => array(
@@ -351,13 +351,13 @@ function os2web_borger_dk_field_default_field_bases() {
     'type' => 'text_long',
   );
 
-  // Exported field_base: 'field_termref_kle'
-  $field_bases['field_termref_kle'] = array(
+  // Exported field_base: 'field_os2web_borger_dk_kle'
+  $field_bases['field_os2web_borger_dk_kle'] = array(
     'active' => 1,
     'cardinality' => -1,
     'deleted' => 0,
     'entity_types' => array(),
-    'field_name' => 'field_termref_kle',
+    'field_name' => 'field_os2web_borger_dk_kle',
     'foreign keys' => array(
       'tid' => array(
         'columns' => array(

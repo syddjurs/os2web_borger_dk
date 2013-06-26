@@ -102,7 +102,7 @@ function os2web_borger_dk_form_alter(&$form, &$form_state, $form_id) {
           os2web_borger_dk_autocomplete_form($form, $form_state);
         }
 
-        $locked_os2web_types = array('field_os2web_borger_dk_borgerurl' => 1, 'field_termref_kle' => 2, 'field_os2web_borger_dk_formterm' => 2);
+        $locked_os2web_types = array('field_os2web_borger_dk_borgerurl' => 1, 'field_os2web_borger_dk_kle' => 2, 'field_os2web_borger_dk_formterm' => 2);
         $admin_display_fields = variable_get('os2web_borger_dk_display');
 
         $data = field_info_instances('node', 'os2web_borger_dk_article');
@@ -397,7 +397,7 @@ function os2web_borger_dk_after_build($form, &$form_state) {
   // Some of the fields are handled exclusively by OS2web.
   // These fields are required on node-add, and can NOT be
   // changed later on (ie. locked).
-  $locked_os2web_types = array('field_os2web_borger_dk_borgerurl' => 1, 'field_termref_kle' => 2,
+  $locked_os2web_types = array('field_os2web_borger_dk_borgerurl' => 1, 'field_os2web_borger_dk_kle' => 2,
     'field_os2web_borger_dk_formterm' => 2);
   $nid = $form_state['values']['nid'];
   $admin_display_fields = variable_get('os2web_borger_dk_display', array(NULL));
