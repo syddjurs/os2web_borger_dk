@@ -102,7 +102,7 @@ function os2web_borger_dk_form_alter(&$form, &$form_state, $form_id) {
           os2web_borger_dk_autocomplete_form($form, $form_state);
         }
 
-        $locked_os2web_types = array('field_os2web_borger_dk_borgerurl' => 1, 'field_termref_kle' => 2, 'field_os2web_borger_dk_formterm' => 2);
+        $locked_os2web_types = array('field_os2web_borger_dk_borgerurl' => 1, 'field_os2web_borger_dk_kle' => 2, 'field_os2web_borger_dk_formterm' => 2);
         $admin_display_fields = variable_get('os2web_borger_dk_display');
 
         $data = field_info_instances('node', 'os2web_borger_dk_article');
@@ -213,7 +213,7 @@ function os2web_borger_dk_form_alter(&$form, &$form_state, $form_id) {
                   $weight = '6.' . ($microno - 10);
                 }
                 else {
-                  $weight = '5.'.$microno;
+                  $weight = '5.' . $microno;
                 }
                 // For each microarticle we build a fieldset, a textfield for
                 // title, a textarea for div content and a checkbox for
@@ -397,7 +397,7 @@ function os2web_borger_dk_after_build($form, &$form_state) {
   // Some of the fields are handled exclusively by OS2web.
   // These fields are required on node-add, and can NOT be
   // changed later on (ie. locked).
-  $locked_os2web_types = array('field_os2web_borger_dk_borgerurl' => 1, 'field_termref_kle' => 2,
+  $locked_os2web_types = array('field_os2web_borger_dk_borgerurl' => 1, 'field_os2web_borger_dk_kle' => 2,
     'field_os2web_borger_dk_formterm' => 2);
   $nid = $form_state['values']['nid'];
   $admin_display_fields = variable_get('os2web_borger_dk_display', array(NULL));
@@ -1124,7 +1124,7 @@ function os2web_borger_dk_import_menu_now_form_submit($form, &$form_state) {
 
 /**
  * Function os2web_borger_dk_create_custom_menu()
- * Create a custom menu. 
+ * Create a custom menu.
  */
 function os2web_borger_dk_create_custom_menu($menu_items_availlable, $total, $parent_array, $menu_name) {
   $borger_dk_menu = variable_get('os2web_borger_dk_borger_dk_menu_name', 'Borger.dk menu');
@@ -1144,7 +1144,7 @@ function os2web_borger_dk_create_custom_menu($menu_items_availlable, $total, $pa
                               array('link_title' => $borger_dk_menu, 'menu_name' => $menu_name))->fetchAssoc();
     if (!$existing_menu) {
       $menu_item = array(
-        'menu_name' => $menu_name, 
+        'menu_name' => $menu_name,
         'link_path' => 'node',
         'link_title' => $borger_dk_menu,
         'module' => 'os2web_borger_dk',
@@ -1206,7 +1206,7 @@ function _os2web_borger_dk_import_menu_items($group, $total, $parent_array,$menu
       if (!$mlid) {
         $nid = _os2web_borger_dk_create_menu_page($item);
         $menu_item = array(
-        'menu_name' => $menu_name, 
+        'menu_name' => $menu_name,
         'link_path' => "node/" . $nid,
         'link_title' => $item['SiteTitle'],
         'module' => 'os2web_borger_dk',
@@ -1228,7 +1228,7 @@ function _os2web_borger_dk_import_menu_items($group, $total, $parent_array,$menu
         // Create a menu page for the Menu item (path)
         $nid = _os2web_borger_dk_create_menu_page($item);
         $menu_item = array(
-          'menu_name' => $menu_name, 
+          'menu_name' => $menu_name,
           'link_path' => "node/" . $nid,
           'link_title' => $item['SiteTitle'],
           'module' => 'os2web_borger_dk',
@@ -1526,7 +1526,7 @@ function _os2web_borger_dk_articles_cronbatch_wrapper() {
  // _os2web_borger_dk_menus_cronbatch(TRUE);
   $context['sandbox']['progress']++;
   $context['message'] = t("Importing articles from Borger.dk.");
-  $context['finished'] = 1; 
+  $context['finished'] = 1;
 }
 
 function os2web_borger_dk_batch_article_import_finished($success, $results, $operations) {
@@ -1626,7 +1626,7 @@ function _os2web_borger_dk_create_borger_dk_meun_structure($item, $total, $menu_
             }
             if ($row->ArticleStatus > 0) {
               $menu_item = array(
-                'menu_name' => $menu_name, 
+                'menu_name' => $menu_name,
                 'link_path' => "node/" . $row->ArticleStatus,
                 'link_title' => $row->ArticleTitle,
                 'module' => 'os2web_borger_dk',
@@ -1715,7 +1715,7 @@ function _os2web_borger_dk_create_borger_dk_meun_structure($item, $total, $menu_
                       ->execute();
                   }
                   $menu_item = array(
-                    'menu_name' => $menu_name, 
+                    'menu_name' => $menu_name,
                     'link_path' => "node/" . $node->nid,
                     'link_title' => $node->title,
                     'module' => 'os2web_borger_dk',
@@ -1855,7 +1855,7 @@ function _os2web_borger_dk_import_supplement_article($value) {
           ->execute();
       }
       $menu_item = array(
-        'menu_name' => $menu_name, 
+        'menu_name' => $menu_name,
         'link_path' => "node/" . $node->nid,
         'link_title' => $node->title,
         'module' => 'os2web_borger_dk',
@@ -2954,4 +2954,27 @@ function _os2web_borger_dk_check_webservice_constraints() {
   // Update the work-load item counter.
   $os2web_borger_dk_article_count_no += 1;
   variable_set('os2web_borger_dk_webservice_request_counter', $os2web_borger_dk_article_count_no);
+}
+
+/**
+ * Implements hook_os2web_help().
+ */
+function os2web_borger_dk_os2web_help($sections) {
+
+  // Content types.
+  $sections['contenttype'] = t('<p><b>Borger.dk Article:</b> Add <a href="@url" target="_blank">borger.dk articles</a> directly from borger.dk, and implement them in your sites structure.<br /><i><a href="@borger" target="_blank">See the advanced documentation for the borger.dk module</a>(.pdf)</i></p>', array('@url' => url('node/add/os2web-borger-dk-article'), '@borger' => file_create_url(drupal_get_path('module', 'os2web_borger_dk') . '/doc/Guide til OS2web borger.dk - articles.pdf')));
+  $sections['import'] = t('<p><b>Automatic import of Borger.dk articles:</b><a href="@url" target="_blank">Configure automatic import and syncronization of articles located on Borger.dk</a><br />See an advanced guide for setting up an import here: <a href="@import-guide" target="_blank">Borger.dk menu import.pdf</a>(<i>Danish only</i>)</p>', array('@url' => url('admin/config/os2web_borger_dk/settings'), '@import-guide' => file_create_url(drupal_get_path('module', 'os2web_borger_dk') . '/doc/Borger.dk menu import.pdf')));
+  return $sections;
+
+}
+
+/**
+ * Implements hook_help().
+ */
+function os2web_borger_dk_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#os2web_borger_dk':
+      // TODO.
+      return t('Missing documentation.');
+  }
 }

@@ -20,7 +20,7 @@ function os2web_borger_dk_settings_form($form, $form_state) {
     '#group' => 'vertical_settings_tab',
   );
   // Some of the fields are locked from from being changed.
-  $locked_os2web_types = array('field_os2web_borger_dk_borgerurl' => 1, 'field_termref_kle' => 2, 'field_os2web_borger_dk_formterm' => 2);
+  $locked_os2web_types = array('field_os2web_borger_dk_borgerurl' => 1, 'field_os2web_borger_dk_kle' => 2, 'field_os2web_borger_dk_formterm' => 2);
 
   $data = field_info_instances('node', 'os2web_borger_dk_article');
   $newdata = array();
@@ -198,7 +198,7 @@ function os2web_borger_dk_settings_form($form, $form_state) {
                         Step2 : When Borger.dk menu items are imported, please import all Borger.dk articles.
                         Step 3 : Create Borger.dk menu structure now."),
   );
-  $menu_option = array();  
+  $menu_option = array();
   $existing_menu = db_query('SELECT * FROM {menu_custom}');
   $menu_option['borgerdkmenu2'] = variable_get('os2web_borger_dk_borger_dk_menu_name', 'Borger.dk menu');
   if ($existing_menu) {
@@ -223,8 +223,8 @@ function os2web_borger_dk_settings_form($form, $form_state) {
   $menus_import = variable_get('os2web_borger_dk_menus_import', 0);
   if ($menus_import == 0) {
     $disabled = TRUE;
-    $description = t('If you want to import the Borger.dk menu you must first activate "Import and utilize Borger.dk-menus" and save the settings');
-    drupal_set_message($description);
+    $description = 'If you want to import the Borger.dk menu you must first activate "Import and utilize Borger.dk-menus" and save the settings';
+    drupal_set_message(t($description));
   }
   $form['os2web_borger_dk_settings_6']['submit']= array(
     '#type' => 'submit',
@@ -258,13 +258,13 @@ function os2web_borger_dk_settings_form($form, $form_state) {
   $form['os2web_borger_dk_settings_7']['os2web_borger_dk_microarticle_active'] = array(
     '#type' => 'checkbox',
     '#title' => t('Show and edit microarticles individually'),
-    '#description' => t('Check to enable visibility and editablity of microarticles from Borger.dk '),
+    '#description' => t('Check to enable visibility and editablity of microarticles from Borger.dk'),
     '#default_value' => variable_get('os2web_borger_dk_microarticle_active', 0),
   );
 
   $options = variable_get('os2web_borger_dk_municipality_list');
   if (isset($options)) {
-    $muni_items= $options; 
+    $muni_items= $options;
   }
   else{
     $muni_items= array();

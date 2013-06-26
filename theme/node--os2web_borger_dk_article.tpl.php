@@ -110,10 +110,10 @@
       if ($admin_display_fields[$type]) {
         $arr = $node-> $type;
 
-      if (count($arr) > 0 && $type != 'title' && $type != 'field_billede') {
+      if (count($arr) > 0 && $type != 'title' && $type != 'field_os2web_borger_dk_image') {
           $content_field[$type] = $arr['und']['0']['value'];
         }
-        elseif (count($arr) > 0 && $type == 'field_billede') {
+        elseif (count($arr) > 0 && $type == 'field_os2web_borger_dk_image') {
           $filepath = $arr['und']['0']['uri'];
           $alt = $arr['und']['0']['alt'];
           $content_field[$type] = theme('image', array('path' => $filepath, 'alt' => $alt, 'title' => $alt));
@@ -185,9 +185,9 @@
   <?php
    print "<div class='borger_dk-region-stack3'>
             <div class='inside'>";
-    if (!empty($content_field['field_billede'])) {
+    if (!empty($content_field['field_os2web_borger_dk_image'])) {
       print "<div class='borger_dk_billede'>";
-      print render($content_field['field_billede']);
+      print render($content_field['field_os2web_borger_dk_image']);
       print "</div>";
     }
 
@@ -246,12 +246,12 @@
 
     print "<div class='borger_dk-region-stack4'>";
     print   "<div class= 'inside'>";
-    if (!empty($content_field['field_os2web_borger_dk_recommend'])) { 
+    if (!empty($content_field['field_os2web_borger_dk_recommend'])) {
       print   "<div class='borger_dk-field_os2web-borger-dk-recommend'>";
       print     render($content_field['field_os2web_borger_dk_recommend']);
       print   "</div>";
       print   "<div class='panel-separator'></div>";
-      
+
     }
     if (!empty($content_field['field_os2web_borger_dk_shortlist'])) {
       print   "<div class='borger_dk-field_os2web-borger-dk-shortlist'> ";
@@ -265,7 +265,7 @@
     }
 
     print "</div></div>";
-    
+
 //      print render($content);
     ?>
     </div>
