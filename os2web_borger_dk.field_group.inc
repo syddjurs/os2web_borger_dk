@@ -13,28 +13,55 @@ function os2web_borger_dk_field_group_info() {
   $field_group = new stdClass();
   $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
   $field_group->api_version = 1;
+  $field_group->identifier = 'group_borger_dk_article|node|os2web_borger_dk_article|form';
+  $field_group->group_name = 'group_borger_dk_article';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'os2web_borger_dk_article';
+  $field_group->mode = 'form';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Borger.dk Article',
+    'weight' => '18',
+    'children' => array(
+      0 => 'group_borger_dk_content',
+      1 => 'group_borger_dk_settings',
+    ),
+    'format_type' => 'htabs',
+    'format_settings' => array(
+      'formatter' => '',
+      'instance_settings' => array(
+        'classes' => '',
+      ),
+    ),
+  );
+  $export['group_borger_dk_article|node|os2web_borger_dk_article|form'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
   $field_group->identifier = 'group_borger_dk_content|node|os2web_borger_dk_article|form';
   $field_group->group_name = 'group_borger_dk_content';
   $field_group->entity_type = 'node';
   $field_group->bundle = 'os2web_borger_dk_article';
   $field_group->mode = 'form';
-  $field_group->parent_name = 'group_borger_dk_side';
+  $field_group->parent_name = 'group_borger_dk_article';
   $field_group->data = array(
-    'label' => 'Borger.dk artikel',
-    'weight' => '10',
+    'label' => 'Indhold',
+    'weight' => '18',
     'children' => array(
       0 => 'body',
-      1 => 'field_billede',
-      2 => 'field_os2web_borger_dk_borgerurl',
-      3 => 'field_os2web_borger_dk_byline',
-      4 => 'field_os2web_borger_dk_header',
-      5 => 'field_os2web_borger_dk_legislati',
-      6 => 'field_os2web_borger_dk_pagetitle',
-      7 => 'field_os2web_borger_dk_post_text',
-      8 => 'field_os2web_borger_dk_pre_text',
-      9 => 'field_os2web_borger_dk_recommend',
-      10 => 'field_os2web_borger_dk_selfservi',
-      11 => 'field_os2web_borger_dk_shortlist',
+      1 => 'field_os2web_borger_dk_borgerurl',
+      2 => 'field_os2web_borger_dk_byline',
+      3 => 'field_os2web_borger_dk_header',
+      4 => 'field_os2web_borger_dk_legislati',
+      5 => 'field_os2web_borger_dk_pagetitle',
+      6 => 'field_os2web_borger_dk_post_text',
+      7 => 'field_os2web_borger_dk_pre_text',
+      8 => 'field_os2web_borger_dk_recommend',
+      9 => 'field_os2web_borger_dk_selfservi',
+      10 => 'field_os2web_borger_dk_shortlist',
+      11 => 'field_os2web_borger_dk_image',
+      12 => 'path',
     ),
     'format_type' => 'htab',
     'format_settings' => array(
@@ -51,19 +78,18 @@ function os2web_borger_dk_field_group_info() {
   $field_group = new stdClass();
   $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
   $field_group->api_version = 1;
-  $field_group->identifier = 'group_borger_dk_sidebar|node|os2web_borger_dk_article|form';
-  $field_group->group_name = 'group_borger_dk_sidebar';
+  $field_group->identifier = 'group_borger_dk_settings|node|os2web_borger_dk_article|form';
+  $field_group->group_name = 'group_borger_dk_settings';
   $field_group->entity_type = 'node';
   $field_group->bundle = 'os2web_borger_dk_article';
   $field_group->mode = 'form';
-  $field_group->parent_name = 'group_borger_dk_side';
+  $field_group->parent_name = 'group_borger_dk_article';
   $field_group->data = array(
     'label' => 'Indstillinger',
-    'weight' => '11',
+    'weight' => '20',
     'children' => array(
-      0 => 'field_indholdsside_spotboxe',
-      1 => 'field_node_reference_kontaktblok',
-      2 => 'field_noderef_selvbtjn',
+      0 => 'field_os2web_borger_dk_formterm',
+      1 => 'field_os2web_borger_dk_kle',
     ),
     'format_type' => 'htab',
     'format_settings' => array(
@@ -75,33 +101,7 @@ function os2web_borger_dk_field_group_info() {
       ),
     ),
   );
-  $export['group_borger_dk_sidebar|node|os2web_borger_dk_article|form'] = $field_group;
-
-  $field_group = new stdClass();
-  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
-  $field_group->api_version = 1;
-  $field_group->identifier = 'group_borger_dk_side|node|os2web_borger_dk_article|form';
-  $field_group->group_name = 'group_borger_dk_side';
-  $field_group->entity_type = 'node';
-  $field_group->bundle = 'os2web_borger_dk_article';
-  $field_group->mode = 'form';
-  $field_group->parent_name = '';
-  $field_group->data = array(
-    'label' => 'Borger.dk artikel side',
-    'weight' => '1',
-    'children' => array(
-      0 => 'group_borger_dk_sidebar',
-      1 => 'group_borger_dk_content',
-    ),
-    'format_type' => 'htabs',
-    'format_settings' => array(
-      'label' => 'Borger.dk artikel side',
-      'instance_settings' => array(
-        'classes' => '',
-      ),
-    ),
-  );
-  $export['group_borger_dk_side|node|os2web_borger_dk_article|form'] = $field_group;
+  $export['group_borger_dk_settings|node|os2web_borger_dk_article|form'] = $field_group;
 
   return $export;
 }
