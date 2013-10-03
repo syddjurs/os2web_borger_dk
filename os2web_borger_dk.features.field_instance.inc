@@ -101,27 +101,19 @@ function os2web_borger_dk_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-os2web_borger_dk_article-field_billede'
-  $field_instances['node-os2web_borger_dk_article-field_billede'] = array(
+  // Exported field_instance: 'node-os2web_borger_dk_article-field_os2web_base_field_contact'
+  $field_instances['node-os2web_borger_dk_article-field_os2web_base_field_contact'] = array(
     'bundle' => 'os2web_borger_dk_article',
+    'default_value' => NULL,
     'deleted' => 0,
     'description' => '',
     'display' => array(
       'default' => array(
-        'label' => 'hidden',
-        'module' => 'image',
-        'settings' => array(
-          'image_link' => '',
-          'image_style' => '',
-        ),
-        'type' => 'image',
-        'weight' => 2,
-      ),
-      'related_block' => array(
         'label' => 'above',
+        'module' => 'node_reference',
         'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
+        'type' => 'node_reference_default',
+        'weight' => 14,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -131,44 +123,104 @@ function os2web_borger_dk_field_default_field_instances() {
       ),
     ),
     'entity_type' => 'node',
-    'field_name' => 'field_billede',
-    'label' => 'Billede',
+    'field_name' => 'field_os2web_base_field_contact',
+    'label' => 'Kontaktblok',
     'required' => 0,
     'settings' => array(
-      'alt_field' => 0,
-      'alt_field_required' => 1,
-      'default_image' => 0,
-      'file_directory' => '',
-      'file_extensions' => 'png gif jpg jpeg',
-      'max_filesize' => '',
-      'max_resolution' => '',
-      'min_resolution' => '',
-      'title_field' => 0,
-      'title_field_required' => 0,
       'user_register_form' => FALSE,
     ),
     'widget' => array(
       'active' => 1,
-      'module' => 'media',
+      'module' => 'node_reference',
       'settings' => array(
-        'allowed_schemes' => array(
-          'public' => 'public',
-          'youtube' => 0,
-        ),
-        'allowed_types' => array(
-          'audio' => 0,
-          'document' => 0,
-          'image' => 'image',
-          'video' => 0,
-        ),
-        'browser_plugins' => array(
-          'media_internet' => 0,
-          'upload' => 0,
-        ),
-        'progress_indicator' => 'throbber',
+        'autocomplete_match' => 'contains',
+        'autocomplete_path' => 'node_reference/autocomplete',
+        'size' => 60,
       ),
-      'type' => 'media_generic',
-      'weight' => 3,
+      'type' => 'node_reference_autocomplete',
+      'weight' => 14,
+    ),
+  );
+
+  // Exported field_instance: 'node-os2web_borger_dk_article-field_os2web_base_field_selfserv'
+  $field_instances['node-os2web_borger_dk_article-field_os2web_base_field_selfserv'] = array(
+    'bundle' => 'os2web_borger_dk_article',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'node_reference',
+        'settings' => array(),
+        'type' => 'node_reference_default',
+        'weight' => 16,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_os2web_base_field_selfserv',
+    'label' => 'Selvbetjeningslinks',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'node_reference',
+      'settings' => array(
+        'autocomplete_match' => 'contains',
+        'autocomplete_path' => 'node_reference/autocomplete',
+        'size' => 60,
+      ),
+      'type' => 'node_reference_autocomplete',
+      'weight' => 16,
+    ),
+  );
+
+  // Exported field_instance: 'node-os2web_borger_dk_article-field_os2web_base_field_spotbox'
+  $field_instances['node-os2web_borger_dk_article-field_os2web_base_field_spotbox'] = array(
+    'bundle' => 'os2web_borger_dk_article',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'node_reference',
+        'settings' => array(),
+        'type' => 'node_reference_default',
+        'weight' => 15,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_os2web_base_field_spotbox',
+    'label' => 'Spotboxe',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'node_reference',
+      'settings' => array(
+        'autocomplete_match' => 'contains',
+        'autocomplete_path' => 'node_reference/autocomplete',
+        'size' => 60,
+      ),
+      'type' => 'node_reference_autocomplete',
+      'weight' => 15,
     ),
   );
 
@@ -335,7 +387,7 @@ function os2web_borger_dk_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 8,
+      'weight' => 12,
     ),
   );
 
@@ -381,7 +433,7 @@ function os2web_borger_dk_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'taxonomy_autocomplete',
-      'weight' => 15,
+      'weight' => 3,
     ),
   );
 
@@ -587,7 +639,7 @@ function os2web_borger_dk_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'taxonomy_autocomplete',
-      'weight' => 14,
+      'weight' => 2,
     ),
   );
 
@@ -676,7 +728,7 @@ function os2web_borger_dk_field_default_field_instances() {
         'rows' => 5,
       ),
       'type' => 'text_textarea',
-      'weight' => 10,
+      'weight' => 9,
     ),
   );
 
@@ -1026,7 +1078,7 @@ function os2web_borger_dk_field_default_field_instances() {
         'rows' => 5,
       ),
       'type' => 'text_textarea',
-      'weight' => 11,
+      'weight' => 10,
     ),
   );
 
@@ -1115,7 +1167,7 @@ function os2web_borger_dk_field_default_field_instances() {
         'rows' => 5,
       ),
       'type' => 'text_textarea',
-      'weight' => 9,
+      'weight' => 8,
     ),
   );
 
@@ -1204,53 +1256,7 @@ function os2web_borger_dk_field_default_field_instances() {
         'rows' => 5,
       ),
       'type' => 'text_textarea',
-      'weight' => 12,
-    ),
-  );
-
-  // Exported field_instance: 'node-os2web_borger_dk_article-field_termref_kle'
-  $field_instances['node-os2web_borger_dk_article-field_termref_kle'] = array(
-    'bundle' => 'os2web_borger_dk_article',
-    'default_value' => NULL,
-    'deleted' => 0,
-    'description' => '',
-    'display' => array(
-      'default' => array(
-        'label' => 'hidden',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 12,
-      ),
-      'related_block' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
-      ),
-      'teaser' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
-      ),
-    ),
-    'entity_type' => 'node',
-    'field_name' => 'field_termref_kle',
-    'label' => 'KL Emneord',
-    'required' => 0,
-    'settings' => array(
-      'user_register_form' => FALSE,
-    ),
-    'widget' => array(
-      'active' => 0,
-      'module' => 'taxonomy',
-      'settings' => array(
-        'autocomplete_path' => 'taxonomy/autocomplete',
-        'content_taxonomy_autocomplete_new_terms' => 'deny',
-        'size' => 60,
-      ),
-      'type' => 'taxonomy_autocomplete',
-      'weight' => 14,
+      'weight' => 11,
     ),
   );
 
@@ -1263,13 +1269,16 @@ function os2web_borger_dk_field_default_field_instances() {
   t('FORM Emneord');
   t('Header');
   t('KL Emneord');
+  t('Kontaktblok');
   t('Legislation');
   t('Page title');
   t('Portalservice/self-service');
   t('Post-text');
   t('Pre-text');
   t('Recommended');
+  t('Selvbetjeningslinks');
   t('Shortlist');
+  t('Spotboxe');
 
   return $field_instances;
 }
